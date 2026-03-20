@@ -1,0 +1,266 @@
+﻿@model TournamentTeamVM
+<style>
+    /* Custom Dark Theme Colors */
+    body {
+        background-color: #0f172a; /* Deep blue background */
+    }
+
+    .tournament-container {
+        font-family: 'Segoe UI', Roboto, sans-serif;
+    }
+
+    .bg-dark-card {
+        background-color: #1e293b !important; /* Lighter card blue */
+        border-radius: 12px;
+    }
+
+    .bg-dark-input {
+        background-color: #334155 !important;
+        border: 1px solid #475569 !important;
+    }
+
+        .bg-dark-input:focus {
+            background-color: #334155;
+            color: white;
+            box-shadow: 0 0 0 0.25rem rgba(59, 130, 246, 0.25);
+        }
+
+    .bg-purple {
+        background-color: #8b5cf6;
+    }
+
+    .nav-tabs .nav-link {
+        font-weight: 500;
+    }
+
+        .nav-tabs .nav-link.active {
+            border-bottom: 3px solid #3b82f6 !important;
+        }
+
+    /* Scrollbar for textarea */
+    textarea.form-control::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    textarea.form-control::-webkit-scrollbar-thumb {
+        background: #475569;
+        border-radius: 4px;
+    }
+
+    /* Accessibility & Visibility Overrides */
+    :root {
+        --text-primary: #ffffff;
+        --text-secondary: #cbd5e1; /* Much lighter than before for readability */
+        --accent-blue: #3b82f6;
+        --card-bg: #1e293b;
+        --input-bg: #334155;
+    }
+
+    body {
+        background-color: #0f172a;
+        font-size: 16px; /* Base size */
+    }
+
+    /* Make labels and descriptions readable */
+    .form-label, .text-secondary {
+        color: var(--text-secondary) !important;
+        font-size: 1.05rem; /* Larger labels */
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+    }
+
+    /* Increase input text size and contrast */
+    .form-control, .form-select {
+        font-size: 1.1rem !important;
+        color: var(--text-primary) !important;
+        padding: 0.75rem 1rem !important; /* Larger click targets */
+    }
+
+    /* Sidebar Stats visibility */
+    .fw-bold {
+        font-size: 1.1rem;
+        color: #f8fafc;
+    }
+
+    /* Heading Scaling */
+    h2 {
+        font-size: 2.2rem;
+    }
+
+    h5 {
+        font-size: 1.3rem;
+        letter-spacing: 0.5px;
+    }
+
+    /* Dashboard Card Spacing */
+    .bg-dark-card {
+        background-color: var(--card-bg) !important;
+        border-radius: 16px;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+        padding: 2rem !important; /* More "breathing room" */
+    }
+
+    /* Tab visibility */
+    .nav-tabs .nav-link {
+        font-size: 1.1rem;
+        padding: 1rem 1.5rem;
+    }
+
+</style>
+
+<div class="tournament-container text-white p-5  ">
+    <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+        <div>
+            <h1 class="text-4xl md:text-6xl font-black tracking-tighter uppercase">
+                <span class="text-green-500 bi bi-trophy-fill me-2 ">@Model.Tournament.Name</span>
+                <span class="badge rounded-pill bg-danger-subtle text-danger fs-6 ms-2">
+                    @if (Model.Tournament.Status?.ToLower() == "active")
+                    {
+                        <span>@Model.Tournament.Status</span>
+                    }
+                    else
+                    {
+                        <span>@Model.Tournament.Status</span>
+                    }
+                </span>
+
+            </h1>
+            <p class="text-secondary">Manage all aspects of your tournament</p>
+        </div>
+
+    </div>
+   
+    <br />
+    <br />
+    <div class="row g-8 ">
+        <div class="col-md-3">
+            <div class="card bg-dark-card border-0 mb-4 p-3">
+                <h5 class="mb-3 text-secondary">Tournament Status</h5>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-secondary">Status</span>
+                    <span class="badge bg-danger-subtle text-danger">• @Model.Tournament.Status</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-secondary">Format</span>
+                    <span class="fw-bold">@Model.Tournament.Format</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-secondary">Start Date</span>
+                    <span class="fw-bold text-info">@Model.Tournament.StartDate?.ToString("MMM dd, yyyy")</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-secondary">End Date</span>
+                    <span class="fw-bold text-info">@Model.Tournament.EndDate?.ToString("MMM dd, yyyy")</span>
+                </div>
+            </div>
+
+            <div class="card bg-dark-card border-0 p-3">
+                <h5 class="text-secondary mb-3">Quick Statistics</h5>
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between small mb-1 text-secondary">
+                        <span>Total Teams</span>
+                        <span>@Model.Tournament.MaxParticipants</span>
+                    </div>
+                    <div class="progress bg-secondary" style="height: 6px;">
+                        <div class="progress-bar bg-primary" style="width: 100%"></div>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between small mb-1 text-secondary">
+                        <span>Matches Played</span>
+                        <span>48</span>
+                    </div>
+                    <div class="progress bg-secondary" style="height: 6px;">
+                        <div class="progress-bar bg-purple" style="width: 75%"></div>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between small mb-1 text-secondary">
+                        <span>Remaining</span>
+                        <span>48</span>
+                    </div>
+                    <div class="progress bg-secondary" style="height: 6px;">
+                        <div class="progress-bar bg-pink" style="width: 75%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-9">
+            <div class="card bg-dark-card border-0 p-4">
+                <ul class="nav nav-tabs border-secondary mb-4">
+                    <li class="nav-item">
+                        @*         <a class="nav-link text-secondary border-0"
+                           href="@Url.Action("ViewDetails", "Home", new { Model.TournamentId})">
+                            Tournament Details
+                        </a> *@
+                        <a class="nav-link text-secondary border-0"
+                           href="@Url.Action("ViewDetails", "Home", new { id = Model.TournamentId })">
+                            Details
+                        </a>
+
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-secondary border-0"
+                           href="@Url.Action("ViewParticipants", "Home", new { tournamentId = Model.TournamentId})">
+                            Participants
+                        </a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link text-secondary border-0" href="#">Brackets</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link text-secondary border-0"
+                           href="@Url.Action("ViewMatches", "Home", new { id = Model.TournamentId})">
+                            Schedule
+                        </a>
+                    </li>
+                </ul>
+                
+                <div class="table-responsive bg-dark p-3 rounded">
+                    @* <table class="table table-dark table-hover align-middle"> *@
+                        <table class="table table-hover align-middle" style="background-color: #0f172a; --bs-table-bg: #0f172a; --bs-table-hover-bg: #1e293b; --bs-table-color: #fff;">
+                        <thead>
+                            <tr class="text-secondary">                                
+                                <th>Team Name</th>
+                                <th>Coach</th>
+                                <th>Status</th>
+                                <th>Registered</th>                                
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var team in Model.AddedTeams)
+                            {
+                                <tr>                                   
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            @* --- LOGO IMAGE --- *@
+                                            <img src="@team.LogoUrl" alt="Logo" class="rounded-circle me-3"
+                                                 style="width: 45px; height: 45px; object-fit: cover; border: 2px solid #3e444a;" />
+
+                                            <div>
+                                                <div class="fw-bold text-white">@team.TeamName</div>
+                                                <small class="text-secondary">@team.Abbreviation</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>@team.CoachName</td>
+                                    <td>
+                                        @* --- STATUS BADGE --- *@
+                                        <span class="badge rounded-pill bg-success-subtle text-success px-3 py-2">
+                                            Approved
+                                        </span>
+                                    </td>
+                                    <td class="text-secondary">
+                                        @team.Established?.ToString("MMM d, yyyy")
+                                    </td>
+                                   
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

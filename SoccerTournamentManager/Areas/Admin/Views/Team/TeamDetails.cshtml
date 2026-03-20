@@ -1,0 +1,101 @@
+﻿@model Team
+
+
+<div class="card shadow border-0 mt-4">    
+        <div class="card-header bg-blue bg-gradient ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-white py-2">
+                    @(Model.TeamId != 0
+                        ? $" Team - {Model.TeamName}"
+                        : "Create Team")
+                </h2>
+
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <img src="@Model.LogoUrl" width="100%"
+             style="border-radius:5px; border:1px solid #bbb9b9" />
+    </div>
+    <div class="card-body p-4">
+        
+        <div class="row pb-3">
+          
+            @* Tournament Info Section *@
+            <div class="col-md-8">
+                <div class="row mb-3">
+                    <label asp-for="TeamName" class="fw-bold col-sm-4"></label>
+                    <div class="col-sm-8 text-secondary">@Model.TeamName</div>
+                </div>
+                <div class="row mb-3">
+                    <label asp-for="Abbreviation" class="fw-bold col-sm-4"></label>
+                    <div class="col-sm-8 text-secondary">@Model.Abbreviation</div>
+                </div>
+
+                <div class="row mb-3">
+                    <label asp-for="CoachName" class="fw-bold col-sm-4"></label>
+                    <div class="col-sm-8 text-secondary">@Model.CoachName</div>
+                </div>
+                <div class="row mb-3">
+                    <label asp-for="Homestadium" class="fw-bold col-sm-4"></label>
+                    <div class="col-sm-8 text-secondary">@Model.Homestadium</div>
+                </div>
+                <div class="row mb-3">
+                    <label asp-for="Email" class="fw-bold col-sm-4"></label>
+                    <div class="col-sm-8 text-secondary">@Model.Email</div>
+                </div>
+                <div class="row mb-3">
+                    <label asp-for="ContactNumber1" class="fw-bold col-sm-4"></label>
+                    <div class="col-sm-8 text-secondary">@Model.ContactNumber1</div>
+                </div>
+                <div class="row mb-3">
+                    <label asp-for="ContactNumber2" class="fw-bold col-sm-4"></label>
+                    <div class="col-sm-8 text-secondary">@Model.ContactNumber2</div>
+                </div>
+                <div class="row mb-3">
+                    <label asp-for="Established" class="fw-bold col-sm-4"></label>
+                    <div class="col-sm-8 text-secondary">@Model.Established</div>
+                </div>
+                <div class="row mb-3">
+                    <label asp-for="LogoUrl" class="fw-bold col-sm-4"></label>
+                    <div class="col-sm-8 text-secondary">@Model.LogoUrl</div>
+                </div>
+            </div>
+       
+            @* Action Menu Section *@
+            <div class="col-md-4 border-start">
+                <h4 class="text-primary mb-3"> Team Management</h4>
+                <div class="d-grid gap-2">
+                    <a asp-area="Admin" asp-controller="Tournaments" asp-action="ViewTournaments"
+                       asp-route-teamId="@Model.TeamId" class="btn btn-success">
+                        <i class="bi bi-trophy"></i> View Tournaments
+                    </a>
+                    <a asp-area="Admin" asp-controller="Team" asp-action="AvailableTournaments"
+                       asp-route-teamId="@Model.TeamId" class="btn btn-success">
+                        <i class="bi bi-trophy"></i> Available Tournaments
+                    </a>
+@*                     <a asp-area="Admin" asp-controller="Team" asp-action="MyMatches"
+                       asp-route-tournamentId="@Model.TournamentId" class="btn btn-success">
+                        <i class="bi bi-trophy"></i> View Matches
+                    </a> *@
+                    <a asp-area="Admin" asp-controller="Player" asp-action="Index" asp-route-id="@Model.TeamId"
+                       class="btn btn-primary">
+                        <i class="bi bi-people"></i> Manage Team Members
+                    </a>
+                    <hr />
+                    <a asp-area="Admin" asp-controller="Team" asp-action="Upsert" asp-route-id="@Model.TeamId" class="btn btn-warning">
+                        Edit Team Details
+                    </a>
+                    <a asp-action="Index" class="btn btn-outline-secondary">
+                        Back to List
+                    </a>
+
+                </div>
+            </div>
+        </div>
+     </div>
+</div>
+
+
+

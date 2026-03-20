@@ -1,0 +1,96 @@
+﻿@model List<Team>
+
+    <body class="bg-pp-navy">
+
+
+    <div class="card shadow border-0 mt-4">
+            <div class="card-header bg-blue bg-primary ml-0 py-3">
+                  <div class="row">
+                      <div class="col-12 text-center">
+                         <h2 class="text-white py-2">List Team</h2>
+                      </div>
+                  </div>
+            </div>
+
+            <div class="row pt-4 pb-3">
+            <div class="col-6">
+                <h2 class="text-primary">
+                  
+                </h2>
+            </div>
+            <div class="col-6 text-end">
+                <a asp-controller="Team" asp-action="Upsert" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i>  Create New Team
+                </a>
+            </div>
+        </div>
+
+        <div class="card-body p-4">
+             <div class="accordion accordion-flush" id="teamAccordion">
+        @foreach (var obj in Model.OrderBy(u => u.TeamId))
+        {
+            <div class="accordion-item mb-3 border shadow-sm">
+                <h2 class="accordion-header" id="heading-@obj.TeamId">
+                    <button class="accordion-button collapsed bg-white" type="button" 
+                            data-bs-toggle="collapse" data-bs-target="#collapse-@obj.TeamId" 
+                            aria-expanded="false" aria-controls="collapse-@obj.TeamId">
+                        
+                        <div class="d-flex align-items-center w-100">
+                            <img src="@(string.IsNullOrEmpty(obj.LogoUrl) ? "/images/default-logo.png" : obj.LogoUrl)" 
+                                 alt="Logo" class="rounded-circle me-3" style="width:50px; height:50px; object-fit:cover;">
+                            <div>
+                                <h5 class="mb-0 fw-bold text-dark">@obj.TeamName</h5>
+                                <small class="text-muted">Established @(obj.Established?.Year.ToString() ?? "N/A")</small>
+                            </div>
+                        </div>
+
+                    </button>
+                </h2>
+
+                <div id="collapse-@obj.TeamId" class="accordion-collapse collapse" 
+                     aria-labelledby="heading-@obj.TeamId" data-bs-parent="#teamAccordion">
+                    <div class="accordion-body bg-light">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <h6 class="text-uppercase fw-bold text-muted small">Stat Summary</h6>
+                                <p><i class="bi bi-person-badge me-2"></i><strong>Manager:</strong> @obj.CoachName</p>
+                                <p><i class="bi bi-geo-alt me-2"></i><strong>Stadium:</strong> @obj.Homestadium</p>
+                                <p><i class="bi bi-telephone me-2"></i><strong>Contact:</strong> @obj.ContactNumber1</p>
+                                <p><i class="bi bi-telephone me-2"></i><strong>Contact:</strong> @obj.ContactNumber2</p>
+                            </div>
+                            
+                            <div class="col-md-4 text-center">
+                                <img src="@obj.LogoUrl" class="img-fluid opacity-25" style="max-height: 150px;" />
+                                <div class="mt-3">
+                     
+
+                                    <a asp-controller="Team" asp-action="TeamDetails" asp-route-id="@obj.TeamId" class="btn btn-sm btn-outline-primary me-2">
+                                        <i class="bi bi-eye"></i> Club Detail
+                                    </a>
+                                            <a asp-controller="Team" asp-action="Upsert" asp-route-id="@obj.TeamId" class="btn btn-sm btn-outline-primary me-2">
+                                        <i class="bi bi-pencil-square"></i> Edit Club
+                                    </a>
+                                    <a asp-controller="Team" asp-action="Delete" asp-route-id="@obj.TeamId" class="btn btn-sm btn-outline-danger">
+                                        <i class="bi bi-trash"></i> Delete Club
+                                    </a>
+                           
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+        </div>
+    </div>
+
+
+
+     </body>
+
+
+
+
+
+

@@ -1,0 +1,67 @@
+﻿@model IEnumerable<Match>
+
+@{
+    ViewData["Title"] = "Matches";
+
+    var teams = ViewBag.Teams as Dictionary<int, string>;
+}
+
+<h2>Matches</h2>
+
+<a asp-area="Admin"
+   asp-controller="Matches"
+   asp-action="Generate"
+   asp-route-tournamentId="@ViewBag.TournamentId"
+   class="btn btn-primary">
+
+    Generate Matches
+
+</a>
+
+<hr />
+
+<table class="table table-bordered">
+
+    <thead>
+        <tr>
+
+            <th>Home Team</th>
+            <th>Away Team</th>
+            <th>Date</th>
+            <th>Status</th>
+
+        </tr>
+    </thead>
+
+    <tbody>
+
+        @foreach (var match in Model)
+        {
+            <tr>
+
+                <td>
+                    @(teams.ContainsKey(match.HomeTeamId)
+                        ? teams[match.HomeTeamId]
+                        : "Unknown")
+                </td>
+
+                <td>
+                    @(teams.ContainsKey(match.AwayTeamId)
+                        ? teams[match.AwayTeamId]
+                        : "Unknown")
+                </td>
+
+                <td>
+                    @match.MatchDate.ToShortDateString()
+                </td>
+
+                <td>
+                    @match.Status
+                </td>
+
+            </tr>
+        }
+
+    </tbody>
+
+</table>

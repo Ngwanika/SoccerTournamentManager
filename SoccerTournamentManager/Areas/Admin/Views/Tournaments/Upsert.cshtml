@@ -1,0 +1,107 @@
+﻿@model SoccerTournament.Models.Tournament
+
+<div class="card shadow border-0 mt-4">
+    <div class="card-header bg-secondary bg-gradient py-3">
+        <div class="row">
+            <div class="col-12 text-center">                
+                <h2 class="text-white py-2 bi bi-person-plus me-2">
+
+                    @(Model.TournamentId == 0
+                        ? "Create Tournament"
+                        : $"Update Tournament - {Model.Name} ")
+                </h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body p-4">
+        <form asp-action="Upsert" method="post" class="row">
+            <input asp-for="TournamentId" hidden />
+            <div class="border p-3">
+
+                @* Tournament Name *@
+                <div class="form-floating py-2 col-12">
+                    <input asp-for="Name" class="form-control border-0 shadow" placeholder="Name" />
+                    <label asp-for="Name" class="ms-2"></label>
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                @* Location *@
+                <div class="form-floating py-2 col-12">
+                    <input asp-for="Location" class="form-control border-0 shadow" placeholder="Location" />
+                    <label asp-for="Location" class="ms-2"></label>
+                    <span asp-validation-for="Location" class="text-danger"></span>
+                </div>
+
+                <div class="row">
+                    @* FORMAT DROPDOWN *@
+                    <div class="form-floating py-2 col-6">
+                        <select asp-for="Format" asp-items="@ViewBag.FormatList" class="form-select border-0 shadow">
+                            <option disabled selected>--Select Format--</option>
+                        </select>
+                        <label asp-for="Format" class="ms-2"></label>
+                        <span asp-validation-for="Format" class="text-danger"></span>
+                    </div>
+
+                    @* STATUS DROPDOWN *@
+                    <div class="form-floating py-2 col-6">
+                        <select asp-for="Status" asp-items="@ViewBag.StatusList" class="form-select border-0 shadow">
+                            <option disabled selected>--Select Status--</option>
+                        </select>
+                        <label asp-for="Status" class="ms-2"></label>
+                        <span asp-validation-for="Status" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-floating py-2 col-6">
+                        <input asp-for="StartDate" type="date" class="form-control border-0 shadow" />
+                        <label asp-for="StartDate" class="ms-2"></label>
+                    </div>
+                    <div class="form-floating py-2 col-6">
+                        <input asp-for="EndDate" type="date" class="form-control border-0 shadow" />
+                        <label asp-for="EndDate" class="ms-2"></label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-floating py-2 col-6">
+                        <input asp-for="DeadlineDate" type="date" class="form-control border-0 shadow" />
+                        <label asp-for="DeadlineDate" class="ms-2"></label>
+                    </div>
+                    <div class="form-floating py-2 col-6">
+                        <input asp-for="Season" class="form-control border-0 shadow" placeholder="e.g. 2024/25" />
+                        <label asp-for="Season" class="ms-2"></label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-floating py-2 col-6">
+                        <input asp-for="MaxParticipants" class="form-control border-0 shadow" />
+                        <label asp-for="MaxParticipants" class="ms-2"></label>
+                    </div>
+                    <div class="form-floating py-2 col-6">
+                        <input asp-for="EntryFee" class="form-control border-0 shadow" />
+                        <label asp-for="EntryFee" class="ms-2"></label>
+                    </div>
+                </div>
+                <div class="form-floating py-2 col-12">
+                    <input asp-for="Description" class="form-control border-0 shadow" placeholder="e.g. 2024/25" />
+                    <label asp-for="Description" class="ms-2"></label>
+                </div>
+
+                <div class="row pt-3">
+                    <div class="col-6 col-md-3">
+                        <button type="submit" class="btn btn-primary form-control shadow">Create</button>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <a asp-action="Details" asp-route-id="@Model.TournamentId" class="btn btn-outline-secondary border form-control shadow">
+                            Back to Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

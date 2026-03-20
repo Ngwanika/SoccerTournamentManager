@@ -1,0 +1,107 @@
+﻿@model Team
+<div class="card shadow border-0 my-4">
+    <div class="card-header bg-primary  bg-gradient ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-white py-2">
+                    @(Model.TeamId != 0
+                        ? $"Update Team - {Model.TeamName}"
+                        : "Create Team")
+                </h2>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="card-body p-4">
+        <form method="post" class="row" enctype="multipart/form-data">
+            <input asp-for="TeamId" hidden />
+            <div class="row pt-4 pb-3">
+                <div class="col-6">
+                    <h2 class="text-primary">
+                    </h2>
+                </div>            
+                <div class="col-6 text-end">
+                    <a asp-area="TeamManager" asp-controller="Player" asp-action="Index" asp-route-id="@Model.TeamId" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i>  Team Members
+                    </a>
+                </div>
+           
+     
+            </div>
+            <div class="row">
+                <div class="col-2">
+                    <img src="@Model.LogoUrl" width="100%"
+                         style="border-radius:5px; border:1px solid #bbb9b9" />
+                </div>
+                <div class="col-10">
+                    <div class="border p-3">
+
+                        @*<div asp-validation-summary="ModelOnly"></div>*@
+                        <div class="form-floating py-2 col-12">
+                            <label asp-for="TeamName" class="ms-2"></label>
+                            <input asp-for="TeamName" class="form-control border-0 shadow" />
+                            <span asp-validation-for="TeamName" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <label asp-for="Abbreviation" class="ms-2"></label>
+                            <input asp-for="Abbreviation" class="form-control border-0 shadow" />
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <label asp-for="CoachName" class="ms-2"></label>
+                            <input asp-for="CoachName" class="form-control border-0 shadow" />
+                            <span asp-validation-for="CoachName" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <label asp-for="Homestadium" class="ms-2"></label>
+                            <input asp-for="Homestadium" class="form-control border-0 shadow" />
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <label asp-for="Email" class="ms-2"></label>
+                            <input asp-for="Email" class="form-control border-0 shadow" />
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <label asp-for="ContactNumber1" class="ms-2"></label>
+                            <input asp-for="ContactNumber1" class="form-control border-0 shadow" />
+                        </div>
+
+                        <div class="form-floating py-2 col-12">
+                            <label asp-for="ContactNumber2" class="ms-2"></label>
+                            <input asp-for="ContactNumber2" class="form-control border-0 shadow" />
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <label asp-for="Established" class="ms-2"></label>
+                            <input asp-for="Established" type="date" class="form-control border-0 shadow" />
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <input type="file" name="file" class="form-control border-0 shadow" />
+                            <label asp-for="LogoUrl" class="ms-2"></label>
+                        </div>
+                        <div class="row">
+                            <div class="col-6 col-md-3">
+                                @if (Model.TeamId != 0)
+                                {
+                                    <button type="submit" class="btn btn-primary form-control ">Update</button>
+                                }
+                                else
+                                {
+                                    <button type="submit" class="btn btn-primary form-control ">Create</button>
+                                }
+
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <a asp-controller="Team" asp-action="Index" class="btn btn-secondary border  form-control">
+                                    Back to Details
+                                </a>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
