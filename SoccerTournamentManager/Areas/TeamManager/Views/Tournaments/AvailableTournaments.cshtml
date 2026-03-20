@@ -1,0 +1,682 @@
+﻿@* Areas/Admin/Views/Team/AvailableTournaments.cshtml *@
+@model List<TournamentStatusVM>
+
+@{
+    ViewData["Title"] = "Available Tournaments";
+    int teamId = (int)ViewBag.TeamId;
+    string teamName = ViewBag.TeamName ?? "Team";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Available Tournaments</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+
+    <style>
+        /* ── Design tokens ───────────────────────────────────────────── */
+        :root {
+            --pitch: #0a3d1f;
+            --pitch-mid: #0f5c2e;
+            --pitch-light: #1a7a3e;
+            --accent: #f0c420;
+            --accent-dim: #c9a115;
+            --danger: #e03e3e;
+            --surface: #0d0d0d;
+            --card: #141414;
+            --card-border: #222;
+            --text: #f0f0f0;
+            --muted: #888;
+            --radius: 10px;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: var(--surface);
+            color: var(--text);
+            font-family: 'Barlow', sans-serif;
+            min-height: 100vh;
+        }
+
+        /* ── Hero header ─────────────────────────────────────────────── */
+        .page-hero {
+            background: linear-gradient(135deg, var(--pitch) 0%, var(--pitch-mid) 60%, #000 100%);
+            padding: 48px 40px 40px;
+            position: relative;
+            overflow: hidden;
+            border-bottom: 3px solid var(--accent);
+        }
+
+            .page-hero::before {
+                content: '';
+                position: absolute;
+                inset: 0;
+                background-image: repeating-linear-gradient( 0deg, transparent, transparent 48px, rgba(255,255,255,0.025) 48px, rgba(255,255,255,0.025) 50px ), repeating-linear-gradient( 90deg, transparent, transparent 48px, rgba(255,255,255,0.025) 48px, rgba(255,255,255,0.025) 50px );
+                pointer-events: none;
+            }
+
+        .hero-label {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 8px;
+        }
+
+        .hero-title {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: clamp(32px, 5vw, 52px);
+            font-weight: 800;
+            line-height: 1;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+        }
+
+            .hero-title span {
+                color: var(--accent);
+            }
+
+        .hero-subtitle {
+            margin-top: 8px;
+            color: rgba(255,255,255,0.55);
+            font-size: 15px;
+        }
+
+        /* ── Main content ────────────────────────────────────────────── */
+        .content-wrap {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0 24px;
+        }
+
+        /* ── Alerts ──────────────────────────────────────────────────── */
+        .alert-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 20px;
+            border-radius: var(--radius);
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 28px;
+            animation: slideDown .3s ease;
+        }
+
+        @@keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert-bar.success {
+            background: rgba(16,185,129,.12);
+            border: 1px solid rgba(16,185,129,.4);
+            color: #6ee7b7;
+        }
+
+        .alert-bar.error {
+            background: rgba(224,62,62,.12);
+            border: 1px solid rgba(224,62,62,.4);
+            color: #fca5a5;
+        }
+
+        /* ── Summary strip ───────────────────────────────────────────── */
+        .summary-strip {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 32px;
+        }
+
+        .stat-pill {
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 100px;
+            padding: 8px 20px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--muted);
+        }
+
+            .stat-pill strong {
+                color: var(--text);
+                font-size: 17px;
+                font-family: 'Barlow Condensed', sans-serif;
+            }
+
+        /* ── Tournament cards ────────────────────────────────────────── */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .t-card {
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform .2s ease, border-color .2s ease;
+            animation: fadeUp .4s ease both;
+        }
+
+            .t-card:hover {
+                transform: translateY(-4px);
+                border-color: #333;
+            }
+
+        @@keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(16px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* stagger children */
+        .t-card:nth-child(1) {
+            animation-delay: .05s;
+        }
+
+        .t-card:nth-child(2) {
+            animation-delay: .10s;
+        }
+
+        .t-card:nth-child(3) {
+            animation-delay: .15s;
+        }
+
+        .t-card:nth-child(4) {
+            animation-delay: .20s;
+        }
+
+        .t-card:nth-child(5) {
+            animation-delay: .25s;
+        }
+
+        .t-card:nth-child(6) {
+            animation-delay: .30s;
+        }
+
+        /* Coloured top accent per status */
+        .t-card::before {
+            content: '';
+            display: block;
+            height: 4px;
+            width: 100%;
+        }
+
+        .t-card.status-none ::before,
+        .t-card.status-none::before {
+            background: #333;
+        }
+
+        .t-card.status-pending::before {
+            background: var(--accent);
+        }
+
+        .t-card.status-approved::before {
+            background: #10b981;
+        }
+
+        .t-card.status-rejected::before {
+            background: var(--danger);
+        }
+
+        .card-body {
+            padding: 20px 22px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .card-title {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: .3px;
+            line-height: 1.2;
+        }
+
+        .card-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .meta-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+            .meta-row i {
+                font-size: 14px;
+                flex-shrink: 0;
+            }
+
+            .meta-row span {
+                color: var(--text);
+            }
+
+            .meta-row .overdue {
+                color: var(--danger);
+            }
+
+        /* ── Status badge ────────────────────────────────────────────── */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 12px;
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .8px;
+            width: fit-content;
+        }
+
+        .badge-none {
+            background: rgba(255,255,255,.06);
+            color: var(--muted);
+            border: 1px solid #2a2a2a;
+        }
+
+        .badge-pending {
+            background: rgba(240,196,32,.12);
+            color: var(--accent);
+            border: 1px solid rgba(240,196,32,.3);
+        }
+
+        .badge-approved {
+            background: rgba(16,185,129,.12);
+            color: #34d399;
+            border: 1px solid rgba(16,185,129,.3);
+        }
+
+        .badge-rejected {
+            background: rgba(224,62,62,.12);
+            color: #f87171;
+            border: 1px solid rgba(224,62,62,.3);
+        }
+
+        .status-badge .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .badge-pending .dot {
+            background: var(--accent);
+            animation: pulse 1.5s infinite;
+        }
+
+        .badge-approved .dot {
+            background: #34d399;
+        }
+
+        .badge-rejected .dot {
+            background: #f87171;
+        }
+
+        .badge-none .dot {
+            background: var(--muted);
+        }
+
+        @@keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: .35;
+            }
+        }
+
+        /* ── Card footer / CTA ───────────────────────────────────────── */
+        .card-footer {
+            padding: 14px 22px;
+            border-top: 1px solid var(--card-border);
+            background: rgba(255,255,255,.02);
+        }
+
+        .btn-apply {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--accent);
+            color: #000;
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 10px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background .15s ease, transform .1s ease;
+            width: 100%;
+            justify-content: center;
+        }
+
+            .btn-apply:hover {
+                background: var(--accent-dim);
+            }
+
+            .btn-apply:active {
+                transform: scale(.97);
+            }
+
+        .btn-reapply {
+            background: transparent;
+            border: 1px solid rgba(224,62,62,.5);
+            color: #f87171;
+        }
+
+            .btn-reapply:hover {
+                background: rgba(224,62,62,.1);
+            }
+
+        .status-msg {
+            font-size: 13px;
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .deadline-warning {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: #fb923c;
+            padding: 8px 0 0;
+        }
+
+        /* ── Empty state ─────────────────────────────────────────────── */
+        .empty-state {
+            text-align: center;
+            padding: 80px 24px;
+            color: var(--muted);
+        }
+
+            .empty-state i {
+                font-size: 56px;
+                display: block;
+                margin-bottom: 16px;
+                opacity: .3;
+            }
+
+            .empty-state h3 {
+                font-size: 20px;
+                color: var(--text);
+                margin-bottom: 8px;
+            }
+
+        /* ── Back link ───────────────────────────────────────────────── */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--muted);
+            font-size: 13px;
+            text-decoration: none;
+            margin-bottom: 28px;
+            transition: color .15s;
+        }
+
+            .back-link:hover {
+                color: var(--text);
+            }
+    </style>
+</head>
+<body>
+
+    <!-- ── Hero ──────────────────────────────────────────────────────── -->
+    <div class="page-hero">
+        <div class="hero-label">Tournament Registration</div>
+        <h1 class="hero-title">Available <span>Tournaments</span></h1>
+        <p class="hero-subtitle">Browsing as <strong>@teamName</strong></p>
+    </div>
+
+    <!-- ── Content ───────────────────────────────────────────────────── -->
+    <div class="content-wrap">
+
+        <!-- Alerts from TempData -->
+        @if (TempData["success"] != null)
+        {
+            <div class="alert-bar success">
+                <i class="bi bi-check-circle-fill"></i>
+                @TempData["success"]
+            </div>
+        }
+        @if (TempData["error"] != null)
+        {
+            <div class="alert-bar error">
+                <i class="bi bi-exclamation-circle-fill"></i>
+                @TempData["error"]
+            </div>
+        }
+
+        <!-- Back link -->
+        <a asp-controller="Team" asp-action="Index" class="back-link">
+            <i class="bi bi-arrow-left"></i> Back to Team Details 
+        </a>
+     
+        @{
+            int total = Model.Count;
+            int pending = Model.Count(x => x.Status == "Pending");
+            int approved = Model.Count(x => x.Status == "Approved");
+            int rejected = Model.Count(x => x.Status == "Rejected");
+            int notApplied = Model.Count(x => x.Status == null);
+        }
+
+        <!-- Summary strip -->
+        <div class="summary-strip">
+            <div class="stat-pill"><strong>@total</strong> Tournaments</div>
+            <div class="stat-pill"><strong>@notApplied</strong> Open to Apply</div>
+            @if (pending > 0)
+            {
+                <div class="stat-pill"><strong>@pending</strong> Pending</div>
+            }
+            @if (approved > 0)
+            {
+                <div class="stat-pill"><strong>@approved</strong> Approved</div>
+            }
+            @if (rejected > 0)
+            {
+                <div class="stat-pill"><strong>@rejected</strong> Rejected</div>
+            }
+        </div>
+
+        <!-- Cards -->
+        @if (!Model.Any())
+        {
+            <div class="empty-state">
+                <i class="bi bi-trophy"></i>
+                <h3>No Upcoming Tournaments</h3>
+                <p>Check back later — new tournaments will appear here when they open.</p>
+            </div>
+        }
+        else
+        {
+            <div class="cards-grid">
+                @foreach (var item in Model)
+                {
+                    string cardClass = item.Status switch
+                    {
+                        "Pending" => "status-pending",
+                        "Approved" => "status-approved",
+                        "Rejected" => "status-rejected",
+                        _ => "status-none"
+                    };
+
+                    string badgeClass = item.Status switch
+                    {
+                        "Pending" => "badge-pending",
+                        "Approved" => "badge-approved",
+                        "Rejected" => "badge-rejected",
+                        _ => "badge-none"
+                    };
+
+                    string badgeIcon = item.Status switch
+                    {
+                        "Pending" => "bi-hourglass-split",
+                        "Approved" => "bi-check-circle-fill",
+                        "Rejected" => "bi-x-circle-fill",
+                        _ => "bi-circle"
+                    };
+
+                    string badgeText = item.Status switch
+                    {
+                        "Pending" => "Pending Approval",
+                        "Approved" => "Approved",
+                        "Rejected" => "Rejected",
+                        _ => "Not Applied"
+                    };
+
+                    bool deadlinePassed = item.IsDeadlinePassed;
+
+                    <div class="t-card @cardClass">
+                        <div class="card-body">
+
+                            <!-- Title -->
+                            <div class="card-title">@item.TournamentName</div>
+
+                            <!-- Meta -->
+                            <div class="card-meta">
+                                <div class="meta-row">
+                                    <i class="bi bi-calendar3"></i>
+                                    @if (item.Deadline.HasValue)
+                                    {
+                                        <span class="@(deadlinePassed ? "overdue" : "")">
+                                            Deadline: @item.Deadline.Value.ToString("dd MMM yyyy")
+                                            @if (deadlinePassed)
+                                            {
+                                                <text> — Closed</text>
+                                            }
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span>No deadline set</span>
+                                    }
+                                </div>
+                            </div>
+
+                            <!-- Status badge -->
+                            <div class="status-badge @badgeClass">
+                                <span class="dot"></span>
+                                <i class="bi @badgeIcon"></i>
+                                @badgeText
+                            </div>
+
+                            <!-- Deadline warning for pending -->
+                            @if (item.Status == "Pending" && deadlinePassed)
+                            {
+                                <div class="deadline-warning">
+                                    <i class="bi bi-exclamation-triangle-fill"></i>
+                                    Registration deadline has passed — your application is still under review.
+                                </div>
+                            }
+
+                        </div><!-- /card-body -->
+
+                        <div class="card-footer">
+                            @if (item.Status == null && !deadlinePassed)
+                            {
+                                <!-- First-time apply -->
+                                <form asp-action="ApplyToTournament" asp-controller="Tournaments" method="post">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="teamId" value="@teamId" />
+                                    <input type="hidden" name="tournamentId" value="@item.TournamentId" />
+                                    <button type="submit" class="btn-apply">
+                                        <i class="bi bi-send-fill"></i> Apply Now
+                                    </button>
+                                </form>
+                            }
+                            else if (item.Status == null && deadlinePassed)
+                            {
+                                <span class="status-msg"><i class="bi bi-lock"></i> Registration closed</span>
+                            }
+                            else if (item.Status == "Rejected")
+                            {
+                                <!-- Re-apply after rejection -->
+                                <form asp-action="ApplyToTournament" asp-controller="Team" method="post">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="teamId" value="@teamId" />
+                                    <input type="hidden" name="tournamentId" value="@item.TournamentId" />
+                                    <button type="submit" class="btn-apply btn-reapply">
+                                        <i class="bi bi-arrow-repeat"></i> Re-Apply
+                                    </button>
+                                </form>
+                            }
+                            else if (item.Status == "Pending")
+                            {
+                                <span class="status-msg">
+                                    <i class="bi bi-hourglass-split"></i>
+                                    Your application is under review.
+                                </span>
+                            }
+                            else if (item.Status == "Approved")
+                            {
+                                <span class="status-msg" style="color:#34d399;">
+                                    <i class="bi bi-trophy-fill"></i>
+                                    You're in! Good luck.
+                                </span>
+                                <!-- First-time apply -->
+                                <form asp-action="Details" asp-controller="Tournaments" method="post">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="teamId" value="@teamId" />
+                                    <input type="hidden" name="tournamentId" value="@item.TournamentId" />
+                                    <button type="submit" class="btn-apply">
+                                        <i class="bi bi-send-fill"></i> Details
+                                    </button>
+                                </form>
+                            }
+                        </div><!-- /card-footer -->
+                    </div>
+
+                    <!-- /t-card -->
+                }
+            </div>
+
+            <!-- /cards-grid -->
+        }
+
+    </div><!-- /content-wrap -->
+
+</body>
+</html>

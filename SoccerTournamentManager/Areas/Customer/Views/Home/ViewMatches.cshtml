@@ -1,0 +1,494 @@
+﻿@model TournamentMatchesVM
+
+<style>
+    /* Custom Dark Theme Colors */
+    body {
+        background-color: #0f172a;
+    }
+
+    .tournament-container {
+        font-family: 'Segoe UI', Roboto, sans-serif;
+    }
+
+    .bg-dark-card {
+        background-color: #1e293b !important;
+        border-radius: 12px;
+    }
+
+    .bg-dark-input {
+        background-color: #334155 !important;
+        border: 1px solid #475569 !important;
+    }
+
+        .bg-dark-input:focus {
+            background-color: #334155;
+            color: white;
+            box-shadow: 0 0 0 0.25rem rgba(59, 130, 246, 0.25);
+        }
+
+    .bg-purple {
+        background-color: #8b5cf6;
+    }
+
+    .nav-tabs .nav-link {
+        font-weight: 500;
+    }
+
+        .nav-tabs .nav-link.active {
+            border-bottom: 3px solid #3b82f6 !important;
+        }
+
+    /* Scrollbar for textarea */
+    textarea.form-control::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    textarea.form-control::-webkit-scrollbar-thumb {
+        background: #475569;
+        border-radius: 4px;
+    }
+
+    /* Accessibility & Visibility Overrides */
+    :root {
+        --text-primary: #ffffff;
+        --text-secondary: #cbd5e1;
+        --accent-blue: #3b82f6;
+        --card-bg: #1e293b;
+        --input-bg: #334155;
+    }
+
+    body {
+        background-color: #0f172a;
+        font-size: 16px;
+    }
+
+    .form-label, .text-secondary {
+        color: var(--text-secondary) !important;
+        font-size: 1.05rem;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control, .form-select {
+        font-size: 1.1rem !important;
+        color: var(--text-primary) !important;
+        padding: 0.75rem 1rem !important;
+    }
+
+    .fw-bold {
+        font-size: 1.1rem;
+        color: #f8fafc;
+    }
+
+    h2 {
+        font-size: 2.2rem;
+    }
+
+    h5 {
+        font-size: 1.3rem;
+        letter-spacing: 0.5px;
+    }
+
+    .bg-dark-card {
+        background-color: var(--card-bg) !important;
+        border-radius: 16px;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+        padding: 2rem !important;
+    }
+
+    .nav-tabs .nav-link {
+        font-size: 1.1rem;
+        padding: 1rem 1.5rem;
+    }
+
+    /* Match Card Styles */
+    .match-date-header {
+        color: #94a3b8;
+        font-size: 1.2rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #334155;
+    }
+
+    .match-card {
+        background: #1e293b;
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        border-left: 4px solid;
+        transition: transform 0.2s;
+    }
+
+        .match-card:hover {
+            transform: translateX(5px);
+        }
+
+    .accent-live {
+        border-left-color: #ef4444;
+    }
+
+    .accent-done {
+        border-left-color: #10b981;
+    }
+
+    .accent-upcoming {
+        border-left-color: #f59e0b;
+    }
+
+    .stage-badge {
+        background: #334155;
+        color: #94a3b8;
+        padding: 0.25rem 1rem;
+        border-radius: 20px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        display: inline-block;
+    }
+
+    .team-logo {
+        width: 48px;
+        height: 48px;
+        background: #334155;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: white;
+    }
+
+    .seed-number {
+        color: #f97316;
+        font-size: 0.875rem;
+        font-weight: 600;
+        margin-top: 0.25rem;
+    }
+
+    .match-time {
+        color: #94a3b8;
+        font-size: 0.9rem;
+        margin-right: 1rem;
+    }
+
+    .match-score {
+        font-size: 2rem;
+        font-weight: 700;
+        color: white;
+        margin: 0 2rem;
+    }
+
+    .abadge-live {
+        background: #ef4444;
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        animation: pulse 2s infinite;
+    }
+
+    .abadge-completed {
+        background: #10b981;
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .abadge-upcoming {
+        background: #f59e0b;
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    
+    .goals-list {
+        font-size: 0.875rem;
+        color: #94a3b8;
+        margin-top: 0.5rem;
+        padding-left: 1rem;
+        border-left: 2px solid #334155;
+    }
+
+    .goal-item {
+        margin-bottom: 0.25rem;
+    }
+
+    .action-link {
+        color: #3b82f6;
+        text-decoration: none;
+        font-size: 0.875rem;
+        margin-right: 1rem;
+    }
+
+        .action-link:hover {
+            text-decoration: underline;
+        }
+</style>
+
+<div class="tournament-container text-white p-5">
+    <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+        <div>
+            <h1 class="text-4xl md:text-6xl font-black tracking-tighter uppercase">
+                <span class="text-green-500 bi bi-trophy-fill me-2">@Model.TournamentName</span>
+                <span class="badge rounded-pill bg-danger-subtle text-danger fs-6 ms-2">
+                    @Model.TournamentStatus
+                </span>
+            </h1>
+            <p class="text-secondary">Tournament Schedule & Results</p>
+        </div>
+    </div>
+
+    <br />
+    <br />
+
+    <div class="row g-8">
+        <div class="col-md-3">
+            <!-- Tournament Status Card -->
+            <div class="card bg-dark-card border-0 mb-4 p-3">
+                <h5 class="mb-3 text-secondary">Tournament Status</h5>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-secondary">Status</span>
+                    <span class="badge bg-danger-subtle text-danger">• @Model.TournamentStatus</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-secondary">Total Matches</span>
+                    <span class="fw-bold">@Model.TotalMatches</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-secondary">Completed</span>
+                    <span class="fw-bold text-success">@Model.CompletedCount</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-secondary">Live Now</span>
+                    <span class="fw-bold text-danger">@Model.LiveCount</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-secondary">Upcoming</span>
+                    <span class="fw-bold text-warning">@Model.UpcomingCount</span>
+                </div>
+            </div>
+
+            <!-- Progress Cards -->
+            <div class="card bg-dark-card border-0 p-3">
+                <h5 class="text-secondary mb-3">Tournament Progress</h5>
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between small mb-1 text-secondary">
+                        <span>Matches Played</span>
+                        <span>@Model.CompletedCount / @Model.TotalMatches</span>
+                    </div>
+                    <div class="progress bg-secondary" style="height: 6px;">
+                        @{
+                            var progressPercentage = Model.TotalMatches > 0
+                            ? (Model.CompletedCount * 100) / Model.TotalMatches
+                            : 0;
+                        }
+                        <div class="progress-bar bg-primary" style="width: @(progressPercentage)%"></div>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between small mb-1 text-secondary">
+                        <span>Live Matches</span>
+                        <span>@Model.LiveCount</span>
+                    </div>
+                    <div class="progress bg-secondary" style="height: 6px;">
+                        @{
+                            var livePercentage = Model.TotalMatches > 0
+                            ? (Model.LiveCount * 100) / Model.TotalMatches
+                            : 0;
+                        }
+                        <div class="progress-bar bg-danger" style="width: @(livePercentage)%"></div>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between small mb-1 text-secondary">
+                        <span>Remaining</span>
+                        <span>@Model.UpcomingCount</span>
+                    </div>
+                    <div class="progress bg-secondary" style="height: 6px;">
+                        @{
+                            var upcomingPercentage = Model.TotalMatches > 0
+                            ? (Model.UpcomingCount * 100) / Model.TotalMatches
+                            : 0;
+                        }
+                        <div class="progress-bar bg-warning" style="width: @(upcomingPercentage)%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <div class="card bg-dark-card border-0 p-4">
+                <!-- Navigation Tabs -->
+                <ul class="nav nav-tabs border-secondary mb-4">
+                    <li class="nav-item">
+                        @*         <a class="nav-link text-secondary border-0"
+                           href="@Url.Action("ViewDetails", "Home", new { Model.TournamentId})">
+                            Tournament Details
+                        </a> *@
+                        <a class="nav-link text-secondary border-0"
+                           href="@Url.Action("ViewDetails", "Home", new { id = Model.TournamentId })">
+                            Details
+                        </a>
+
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-secondary border-0"
+                           href="@Url.Action("ViewParticipants", "Home", new { tournamentId = Model.TournamentId})">
+                            Participants
+                        </a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link text-secondary border-0" href="#">Brackets</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link text-secondary border-0"
+                           href="@Url.Action("ViewMatches", "Home", new { id = Model.TournamentId})">
+                            Schedule
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- Schedule Display -->
+                <div class="schedule-container">
+                    @if (!Model.GroupedMatches.Any())
+                    {
+                        <div class="text-center py-5">
+                            <i class="bi bi-calendar-x fs-1 text-secondary"></i>
+                            <p class="text-secondary mt-3">No matches scheduled yet</p>
+                        </div>
+                    }
+                    else
+                    {
+                        var currentDate = DateTime.MinValue;
+
+                        @foreach (var stageGroup in Model.GroupedMatches)
+                        {
+                            <!-- Stage Header -->
+                            <div class="match-date-header mt-4">
+                                <i class="bi bi-trophy me-2"></i>@stageGroup.Stage
+                            </div>
+
+                            @foreach (var match in stageGroup.Matches)
+                            {
+                                <!-- New Date Header if date changes -->
+                                @if (match.MatchDate.Date != currentDate.Date)
+                                {
+                                    currentDate = match.MatchDate.Date;
+                                    <div class="match-date-header mt-4">
+                                        <i class="bi bi-calendar-event me-2"></i>
+                                        @if (match.MatchDate.Date == DateTime.Today)
+                                        {
+                                            <span>Today - </span>
+                                        }
+                                        else if (match.MatchDate.Date == DateTime.Today.AddDays(1))
+                                        {
+                                            <span>Tomorrow - </span>
+                                        }
+                                        @match.MatchDate.ToString("MMMM dd, yyyy")
+                                    </div>
+                                }
+
+                                <!-- Match Card -->
+                                <div class="match-card @match.CardAccentClass">
+                                    <div class="d-flex justify-content-between align-items-start mb-3">
+                                        <span class="stage-badge">@match.Stage</span>
+                                        <span class="@match.StatusBadgeClass">@match.Status</span>
+                                    </div>
+
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <!-- Home Team -->
+                                        <div class="d-flex align-items-center" style="flex: 1;">
+                                            <div class="team-logo me-3">
+                                                @if (!string.IsNullOrEmpty(match.HomeTeamLogo))
+                                                {
+                                                    <img src="@match.HomeTeamLogo" alt="@match.HomeTeamName" class="w-100 h-100 rounded-circle" style="object-fit: cover;" />
+                                                }
+                                                else
+                                                {
+                                                    <span>@match.HomePlaceholder</span>
+                                                }
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold fs-5">@match.HomeTeamName</div>
+                                                <div class="seed-number">Seed #1</div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Score / Time -->
+                                        <div class="text-center mx-4">
+                                            @if (match.ScoreAvailable)
+                                            {
+                                                <div class="match-score">
+                                                    @match.HomeScore - @match.AwayScore
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div class="match-time">
+                                                    <i class="bi bi-clock me-1"></i>
+                                                    @match.MatchDate.ToString("hh:mm tt")
+                                                </div>
+                                            }
+                                        </div>
+
+                                        <!-- Away Team -->
+                                        <div class="d-flex align-items-center justify-content-end" style="flex: 1;">
+                                            <div class="text-end me-3">
+                                                <div class="fw-bold fs-5">@match.AwayTeamName</div>
+                                                <div class="seed-number">Seed #8</div>
+                                            </div>
+                                            <div class="team-logo">
+                                                @if (!string.IsNullOrEmpty(match.AwayTeamLogo))
+                                                {
+                                                    <img src="@match.AwayTeamLogo" alt="@match.AwayTeamName" class="w-100 h-100 rounded-circle" style="object-fit: cover;" />
+                                                }
+                                                else
+                                                {
+                                                    <span>@match.AwayPlaceholder</span>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Goals List (for completed matches) -->
+                                    @if (match.Goals.Any())
+                                    {
+                                        <div class="goals-list mt-3">
+                                            @foreach (var goal in match.Goals.OrderBy(g => g.Minute))
+                                            {
+                                                <div class="goal-item">
+                                                    <i class="bi bi-soccer-ball me-2 text-warning"></i>
+                                                    @goal.Minute' - @goal.ScorerName
+                                                    (@goal.TeamName)
+                                                    @if (goal.IsPenalty)
+                                                    {
+                                                        <span class="text-secondary">(PEN)</span>
+                                                    }
+                                                </div>
+                                            }
+                                        </div>
+                                    }
+
+                                    <!-- Action Links (View Only) -->
+                                    <div class="mt-3 pt-2 border-top border-secondary">
+                                        <a href="#" class="action-link">
+                                            <i class="bi bi-eye me-1"></i>View Details
+                                        </a>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

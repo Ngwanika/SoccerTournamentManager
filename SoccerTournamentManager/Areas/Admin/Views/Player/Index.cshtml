@@ -1,0 +1,117 @@
+﻿@model List<Player>
+
+<div class="bg-pp-navy min-vh-100 p-4 rounded-3">
+    <div class="card shadow border-0 mt-4 bg-white">
+        <div class="card-header bg-blue py-3 border-0">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h2 class="text-white mb-0 px-2">Player Registry</h2>
+                </div>
+                <div class="col-md-6 text-md-end mt-2 mt-md-0">
+                    <a asp-area="Admin" asp-controller="Player" asp-action="Upsert" asp-route-id="@ViewBag.TeamId" class="btn btn-pp-green shadow-sm">
+                        <i class="bi bi-person-plus-fill"></i> Add New Player
+                    </a>
+                </div>
+            </div>
+        </div>
+
+      @*   <div class="col-6 text-end">
+            <a asp-area="Admin" asp-controller="Player" asp-action="Upsert" asp-route-id="@Model.TeamId" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i>  Add Team Member
+            </a>
+        </div> *@
+
+        <div class="card-body p-4">
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0"><i class="bi bi-search"></i></span>
+                        <input type="text" class="form-control bg-light border-start-0" placeholder="Search by name, team or jersey...">
+                    </div>
+                </div>
+                <div class="col-md-4 mt-2 mt-md-0">
+                    <select class="form-select bg-light">
+                        <option selected>All Positions</option>
+                        <option>Goalkeeper</option>
+                        <option>Defender</option>
+                        <option>Midfielder</option>
+                        <option>Forward</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4">Player</th>
+                            <th>Team</th>
+                            <th>Position</th>
+                            <th class="text-center">Jersey #</th>
+                            <th class="text-end pe-4">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.OrderBy(u => u.PlayerId))
+                        {
+                            <tr>
+                                <td class="ps-4">
+                                    <div class="d-flex align-items-center">
+                                        <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px; font-weight: bold;">
+                                            @item.FirstName[0]@item.LastName[0]
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold text-dark">@item.FirstName @item.LastName</div>
+                                            <small class="text-muted">ID: #@item.PlayerId</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="text-dark"><i class="bi bi-shield-shaded me-1 text-primary"></i> @item.FirstName</span>
+                                </td>
+                                <td>
+                                    <span class="badge rounded-pill @GetPositionClass(item.Position)">
+                                        @item.Position
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="fw-black fs-5 text-primary">@item.JerseyNumber</span>
+                                </td>
+                                <td class="text-end pe-4">
+                                    <div class="btn-group">
+                                        <a asp-controller="Player" asp-action="Upsert" asp-route-playerId="@item.PlayerId" class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a asp-controller="Player" asp-action="Details" asp-route-id="@item.PlayerId" class="btn btn-sm btn-outline-info mx-1">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a asp-controller="Player" asp-action="Delete" asp-route-id="@item.PlayerId" class="btn btn-sm btn-outline-danger">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+
+
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    // Helper function to color code positions
+    public string GetPositionClass(string position)
+    {
+        return position?.ToLower() switch
+        {
+            "goalkeeper" => "bg-warning text-dark",
+            "defender" => "bg-info text-white",
+            "midfielder" => "bg-success text-white",
+            "forward" => "bg-danger text-white",
+            _ => "bg-secondary text-white"
+        };
+    }
+}

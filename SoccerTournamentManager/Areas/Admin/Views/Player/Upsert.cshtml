@@ -1,0 +1,206 @@
+﻿@model PlayerVM
+
+<div class="card shadow border-0 my-4">
+    <div class="card-header bg-blue bg-gradient ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">               
+              
+                <h2 class="text-white py-2 bi bi-person-plus me-2">
+
+                    @(Model.Player.PlayerId == 0
+                        ? "Register New Player"
+                        : $"Update Team Member - {Model.Player.FirstName} {Model.Player.LastName}")
+                </h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body p-4">
+        <form method="post" class="row" enctype="multipart/form-data">
+            <input asp-for="Player.PlayerId" hidden />
+            <input asp-for="Player.TeamId" hidden />
+            <div class="row">
+                <div class="col-10">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Player.FirstName" class="form-label fw-bold text-dark"></label>
+                            <input asp-for="Player.FirstName" class="form-control border-secondary-subtle" placeholder="e.g. Themba" />
+                            <span asp-validation-for="Player.FirstName" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Player.LastName" class="form-label fw-bold text-dark"></label>
+                            <input asp-for="Player.LastName" class="form-control border-secondary-subtle" placeholder="e.g. Zwane" />
+                            <span asp-validation-for="Player.LastName" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+
+                 @*    <div class="py-2 col-12">
+                        <select asp-for="@Model.Player.TeamId" asp-items="@Model.TeamList" class="form-select border-0 shadow">
+                            <option disabled selected>--Select Category--</option>
+                        </select>
+                        <label asp-for="Player.TeamId" class="ms-2"></label>
+                        <span asp-validation-for="Player.TeamId" class="text-danger"></span>
+                    </div> *@
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Player.Position" class="form-label fw-bold text-dark"></label>
+                            <select asp-for="Player.Position" class="form-select border-secondary-subtle">
+                                <option value="Goalkeeper">Goalkeeper</option>
+                                <option value="Defender">Defender</option>
+                                <option value="Midfielder">Midfielder</option>
+                                <option value="Forward">Forward</option>
+                            </select>
+                        
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Player.JerseyNumber" class="form-label fw-bold text-dark">Jersey Number</label>
+                            <input asp-for="Player.JerseyNumber" type="number" class="form-control border-secondary-subtle" placeholder="1-99" />                          
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12 mb-4">
+                            <label asp-for="Player.DateOfBirth" class="form-label fw-bold text-dark"></label>
+                            <input asp-for="Player.DateOfBirth" type="date" class="form-control border-secondary-subtle" />                           
+                        </div>
+                    </div>
+
+                    <div class="form-floating py-2 col-12">
+                        <input type="file" name="file" class="form-control border-0 shadow" />
+                        <label asp-for="Player.PlayerPhotoUrl" class="ms-2"></label>
+                    </div>
+                    <hr class="my-4 text-secondary opacity-25" />
+
+                    <div class="row">
+                        <div class="col-6">
+                            <button type="submit" class="btn btn-primary w-100 py-2 fw-bold">
+                                <i class="bi bi-check-circle me-1"></i> Save Player
+                            </button>
+                        </div>
+                        <div class="col-6">
+                            <a asp-action="Index" class="btn btn-outline-secondary w-100 py-2">
+                                Cancel
+                            </a>
+                        </div>
+                    </div>
+                 </div>
+                <div class="col-2">
+                    <img src="@Model.Player.PlayerPhotoUrl" width="100%"
+                         style="border-radius:5px; border:1px solid #bbb9b9" />
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+
+
+<div class="bg-pp-navy min-vh-100 py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow border-0 bg-white">
+                    <div class="card-header bg-primary py-3 border-0">
+                        <div class="text-center">
+                            <h2 class="text-white mb-0"><i class="bi bi-person-plus me-2"></i>Register New Player</h2>
+                        </div>
+                    </div>
+                    <div class="text-center mb-4">
+                        @if (!string.IsNullOrEmpty(Model.Player.PlayerPhotoUrl))
+                        {
+                            <img src="@Model.Player.PlayerPhotoUrl" class="rounded-circle border border-primary shadow"
+                                 style="width: 150px; height: 150px; object-fit: cover;" alt="Player Photo" />
+                        }
+                        else
+                        {
+                            <img src="\images\placeholder-player.png" class="rounded-circle border shadow"
+                                 style="width: 150px; height: 150px; object-fit: cover;" alt="No Photo" />
+                        }
+                    </div>
+                    <div class="card-body p-5">
+                        <form method="post" enctype="multipart/form-data">
+                            <input asp-for="Player.PlayerId" hidden />
+                            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="Player.FirstName" class="form-label fw-bold text-dark"></label>
+                                    <input asp-for="Player.FirstName" class="form-control border-secondary-subtle" placeholder="e.g. Themba" />
+                                    <span asp-validation-for="Player.FirstName" class="text-danger small"></span>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="Player.LastName" class="form-label fw-bold text-dark"></label>
+                                    <input asp-for="Player.LastName" class="form-control border-secondary-subtle" placeholder="e.g. Zwane" />
+                                    <span asp-validation-for="Player.LastName" class="text-danger small"></span>
+                                </div>
+                            </div>
+
+                  
+                            @* <div class="form-floating py-2 col-12">
+                                <select asp-for="@Model.Player.TeamId" asp-items="@Model.TeamList" class="form-select border-0 shadow">
+                                    <option disabled selected>--Select Category--</option>
+                                </select>
+                                <label asp-for="Player.TeamId" class="ms-2"></label>
+                                <span asp-validation-for="Player.TeamId" class="text-danger"></span>
+                            </div> *@
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="Player.Position" class="form-label fw-bold text-dark"></label>
+                                    <select asp-for="Player.Position" class="form-select border-secondary-subtle">
+                                        <option value="Goalkeeper">Goalkeeper</option>
+                                        <option value="Defender">Defender</option>
+                                        <option value="Midfielder">Midfielder</option>
+                                        <option value="Forward">Forward</option>
+                                    </select>
+                                    <span asp-validation-for="Player.Position" class="text-danger small"></span>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="Player.JerseyNumber" class="form-label fw-bold text-dark">Jersey Number</label>
+                                    <input asp-for="Player.JerseyNumber" type="number" class="form-control border-secondary-subtle" placeholder="1-99" />
+                                    <span asp-validation-for="Player.JerseyNumber" class="text-danger small"></span>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12 mb-4">
+                                    <label asp-for="Player.DateOfBirth" class="form-label fw-bold text-dark"></label>
+                                    <input asp-for="Player.DateOfBirth" type="date" class="form-control border-secondary-subtle" />
+                                    <span asp-validation-for="Player.DateOfBirth" class="text-danger small"></span>
+                                </div>
+                            </div>
+
+                            <div class="form-floating py-2 col-12">
+                                <input type="file" name="file" class="form-control border-0 shadow" />
+                                <label asp-for="Player.PlayerPhotoUrl" class="ms-2"></label>
+                            </div>
+                            <hr class="my-4 text-secondary opacity-25" />
+
+                            <div class="row">
+                                <div class="col-6">
+                                    <button type="submit" class="btn btn-primary w-100 py-2 fw-bold">
+                                        <i class="bi bi-check-circle me-1"></i> Save Player
+                                    </button>
+                                </div>
+                                <div class="col-6">
+                                    <a asp-action="Index" class="btn btn-outline-secondary w-100 py-2">
+                                        Cancel
+                                    </a>
+                                </div>
+                            </div>
+                                                        
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

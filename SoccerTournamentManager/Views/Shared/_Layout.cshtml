@@ -1,0 +1,71 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - SoccerTournamentManager</title>
+    <script type="importmap"></script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/SoccerTournamentManager.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="//cdn.datatables.net/1.13.3/css/jquery.dataTables.min.css" />
+
+</head>
+<body>
+    <header class="bg-pp-navy border-bottom border-secondary">
+        <nav class="container d-flex align-items-center justify-content-between py-3">
+            <div class="d-flex align-items-center gap-2 fs-3 fw-bold text-white">
+                <div class="bg-success rounded-circle px-2 py-1 lh-1 text-dark">P</div>
+                PitchPerfect
+            </div>
+
+            <ul class="nav d-none d-md-flex gap-4">
+                <li class="nav-item"><a asp-area="Customer" class="nav-link p-0 text-light" asp-controller="Home" asp-action="Index">Home</a></li>
+                <li class="nav-item"><a asp-area="Customer" class="nav-link p-0 text-light" asp-controller="Home" asp-action="ViewTornaments">Tornaments</a></li>
+                <li class="nav-item"><a asp-area="Customer" class="nav-link p-0 text-light" asp-controller="Home" asp-action="Privacy">Privacy</a></li>
+                @if (User.IsInRole(SD.Role_TeamMananger))
+                {
+                <li class="nav-item"><a asp-area="TeamManager" class="nav-link p-0 text-light" asp-controller="Team" asp-action="Index">Team Details</a></li>
+                }
+             @if (User.IsInRole(SD.Role_Admin))
+                {
+                    
+                    @*                 <li class="nav-item"><a asp-area="Admin" class="nav-link p-0 text-light" asp-controller="TournamentTeams" asp-action="ViewTornaments">ViewTornaments</a></li>
+ *@
+                    <li class="nav-item"><a asp-area="Admin" class="nav-link p-0 text-light" asp-controller="Team" asp-action="Index">Teams</a></li>
+                    @*                 <li class="nav-item"><a asp-area="Admin" class="nav-link p-0 text-light" asp-controller="Team" asp-action="CreateTeam">Create Team</a></li>
+ *@                <li class="nav-item"><a asp-area="Admin" class="nav-link p-0 text-light" asp-controller="Tournaments" asp-action="Index">Tournaments</a></li>
+                    <li class="nav-item"><a asp-area="TeamManager" class="nav-link p-0 text-light" asp-controller="Player" asp-action="Index">Player</a></li>
+                    <li class="nav-item"><a asp-area="TeamManager" class="nav-link p-0 text-light" asp-controller="Tournaments" asp-action="Index">Tournaments team</a></li>
+                    <li class="nav-item"><a asp-area="TeamManager" class="nav-link p-0 text-light" asp-controller="Team" asp-action="Index">Tournaments team</a></li>
+                    <li class="nav-item"><a asp-area="Admin" class="nav-link p-0 text-light" asp-controller="Users" asp-action="Index">Users</a></li>
+                }
+            </ul>
+
+            <partial name="_LoginPartial" />
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            <partial name="_Notification" />
+            @RenderBody()
+        </main>
+    </div>
+
+
+    <footer class="border-top footer bg-slate-900 text-slate-400 py-4">
+        <div class="container text-center">
+            &copy; 2026 - <span class="brand-green font-bold">PitchPerfect Tournament Manager</span>
+            made with <i class="bi bi-heart-fill text-red-500"></i> By Tshepiso Ngwanika -
+            <a class="text-slate-300 hover:text-green-400" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="//cdn.datatables.net/1.13.3/js/jquery.dataTables.min.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

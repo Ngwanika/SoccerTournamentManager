@@ -1,0 +1,18 @@
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+
+namespace SoccerTournament.Models.ViewModels
+{
+    public class PlayerVM
+    {
+        public Player Player { get; set; }
+        [ValidateNever]
+        public IEnumerable<SelectListItem> TeamList { get; set; }
+    }
+}

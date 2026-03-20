@@ -1,0 +1,98 @@
+﻿
+
+@model Tournament
+
+<div class="card shadow border-0 mt-4">
+    <div class="card-header bg-blue bg-primary ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-white py-2">Tournament Details</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body p-4">
+        <div class="row pb-3">
+            @* Tournament Info Section *@
+            <div class="col-md-8">
+                <div class="row mb-3">
+                    <label asp-for="Name" class="fw-bold col-sm-4"></label>
+                    <div class="col-sm-8 text-secondary">@Model.Name</div>
+                </div>
+                <div class="row mb-3">
+                    <label asp-for="Location" class="fw-bold col-sm-4"></label>
+                   
+                    <div class="col-sm-8 text-secondary">@Model.Location</div>
+                </div>
+              
+                <div class="row mb-3">
+                    <label asp-for="DeadlineDate" class="fw-bold col-sm-4"></label>                   
+                    <div class="col-sm-8 text-secondary">@Model.DeadlineDate?.ToLongDateString()</div>
+                </div>
+                <div class="row mb-3">
+                    <label asp-for="StartDate" class="fw-bold col-sm-4"></label>                 
+                    <div class="col-sm-8 text-secondary">@Model.StartDate?.ToLongDateString()</div>
+                </div>
+                <div class="row mb-3">
+                    <label asp-for="EndDate" class="fw-bold col-sm-4"></label>                   
+                    <div class="col-sm-8 text-secondary">@Model.EndDate?.ToLongDateString()</div>
+                </div>
+                <div class="row mb-3">
+                    <label asp-for="Status" class="fw-bold col-sm-4"></label>                  
+                    <div class="col-sm-8">
+                        @if (Model.Status?.ToLower() == "active")
+                        {
+                            <span class="badge bg-success">@Model.Status</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-info text-dark">@Model.Status</span>
+                        }
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <label asp-for="MaxParticipants" class="fw-bold col-sm-4"></label>
+                    <div class="col-sm-8 text-secondary">@Model.MaxParticipants</div>
+                </div>
+                <div class="row mb-3">
+                    <label asp-for="EntryFee" class="fw-bold col-sm-4"></label>
+                    <div class="col-sm-8 text-secondary">@Model.EntryFee</div>
+                </div>
+                <div class="row mb-3">
+                    <label asp-for="Description" class="fw-bold col-sm-4"></label>
+                    <div class="col-sm-8 text-secondary">@Model.Description</div>
+                </div>
+            </div>
+
+            @* Action Menu Section *@
+            <div class="col-md-4 border-start">
+                <h4 class="text-primary mb-3">Management</h4>
+                <div class="d-grid gap-2">
+                    <a asp-area="Admin" asp-controller="Tournaments" asp-action="ManageRegistrations"
+                       asp-route-tournamentId="@Model.TournamentId" class="btn btn-success">
+                        <i class="bi bi-trophy"></i> Manage Registrations
+                    </a>
+                    <a asp-area="Admin" asp-controller="Matches" asp-action="Index"
+                       asp-route-tournamentId="@Model.TournamentId" class="btn btn-success">
+                        <i class="bi bi-trophy"></i> Generate Matches
+                    </a>
+
+                    <a asp-area="Admin" asp-controller="Matches" asp-action="ViewMatches"
+                       asp-route-id="@Model.TournamentId" class="btn btn-success">
+                        <i class="bi bi-calendar3"></i> View Matches 
+                    </a>
+                    <a asp-area="Admin" asp-controller="TournamentTeams" asp-action="Manage"
+                       asp-route-tournamentId="@Model.TournamentId" class="btn btn-primary">
+                        <i class="bi bi-people"></i> Manage Teams
+                    </a>
+                    <hr />
+                    <a asp-action="Upsert"  asp-route-id="@Model.TournamentId" class="btn btn-warning">
+                        Edit Tournament
+                    </a>
+                    <a asp-action="Index" class="btn btn-outline-secondary">
+                        Back to List
+                    </a>
+                </div>
+            </div>
+        </div>
+     </div>
+</div>

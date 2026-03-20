@@ -1,0 +1,55 @@
+﻿@model IEnumerable<TournamentRegistration>
+
+<div class="container mt-4">
+    <h2>Manage Registrations — @Model.FirstOrDefault()?.Tournament?.Name</h2>
+    <table class="table table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>Team</th>
+                <th>Applied</th>
+                <th>Status</th>
+                <th>Notes</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var reg in Model)
+            {
+                <tr>
+                    <td>@reg.Team?.TeamName</td>
+                    <td>@reg.AppliedDate.ToString("dd MMM yyyy")</td>
+                    <td>
+                        <span class="badge
+                            @(reg.Status == "Approved" ? "bg-success" :
+                              reg.Status == "Rejected" ? "bg-danger" : "bg-warning text-dark")">
+                            @reg.Status
+                        </span>
+                    </td>
+                    <td>@reg.AdminNotes</td>
+                    <td>
+                        @if (reg.Status == "Pending")
+                        {
+                            <form asp-action="ReviewRegistration" method="post" class="d-inline">
+                                <input type="hidden" name="registrationId" value="@reg.RegistrationId" />
+                                <input type="hidden" name="decision" value="Approved" />
+                                <button class="btn btn-success btn-sm">✅ Approve</button>
+                            </form>
+
+                            <form asp-action="ReviewRegistration" method="post" class="d-inline ms-1">
+                                <input type="hidden" name="registrationId" value="@reg.RegistrationId" />
+                                <input type="hidden" name="decision" value="Rejected" />
+                                <input type="text" name="adminNotes" placeholder="Reason (optional)"
+                                       class="form-control form-control-sm d-inline w-auto" />
+                                <button class="btn btn-danger btn-sm">❌ Reject</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <span class="text-muted">Reviewed @reg.ReviewedDate?.ToString("dd MMM yyyy")</span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

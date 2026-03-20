@@ -1,0 +1,769 @@
+﻿@* Areas/Admin/Views/Tournaments/ViewMatches.cshtml *@
+@model SoccerTournament.Models.ViewModels.TournamentMatchesVM
+
+@{
+    ViewData["Title"] = "Match Overview";
+   
+}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@Model.TournamentName — All Matches</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Mulish:wght@300;400;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+
+    <style>
+        :root {
+            --bg: #f4f3ef;
+            --surface: #ffffff;
+            --dark: #111111;
+            --mid: #444444;
+            --muted: #999999;
+            --border: #e0ddd6;
+            --green: #1a7a3e;
+            --green-light: #e8f5ee;
+            --red: #c0392b;
+            --red-light: #fdf0ee;
+            --amber: #d4870a;
+            --amber-light: #fef6e7;
+            --live: #e8162a;
+            --live-light: #fff0f1;
+            --r: 8px;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--dark);
+            font-family: 'Mulish', sans-serif;
+            min-height: 100vh;
+        }
+
+        /* ── HERO ───────────────────────────────────────────────────────────── */
+        .hero {
+            background: var(--dark);
+            color: #fff;
+            padding: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-inner {
+            padding: 48px 48px 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Large decorative text behind hero */
+        .hero-bg-text {
+            position: absolute;
+            right: -20px;
+            top: -20px;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 220px;
+            line-height: 1;
+            color: rgba(255,255,255,.04);
+            pointer-events: none;
+            user-select: none;
+            white-space: nowrap;
+        }
+
+        .hero-breadcrumb {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,.4);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+            .hero-breadcrumb a {
+                color: rgba(255,255,255,.4);
+                text-decoration: none;
+                transition: color .15s;
+            }
+
+                .hero-breadcrumb a:hover {
+                    color: #fff;
+                }
+
+        .hero-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(40px, 6vw, 72px);
+            line-height: .95;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+            .hero-title span {
+                color: #f0c420;
+            }
+
+        .hero-meta {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-top: 14px;
+        }
+
+        .t-status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 100px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .ts-active {
+            background: rgba(26,122,62,.25);
+            color: #4ade80;
+            border: 1px solid rgba(74,222,128,.2);
+        }
+
+        .ts-upcoming {
+            background: rgba(240,196,32,.2);
+            color: #f0c420;
+            border: 1px solid rgba(240,196,32,.2);
+        }
+
+        .ts-completed {
+            background: rgba(255,255,255,.1);
+            color: rgba(255,255,255,.5);
+            border: 1px solid rgba(255,255,255,.1);
+        }
+
+        /* ── STATS BAR ──────────────────────────────────────────────────────── */
+        .stats-bar {
+            background: #1a1a1a;
+            border-top: 1px solid #2a2a2a;
+            display: flex;
+        }
+
+        .stat-cell {
+            flex: 1;
+            padding: 16px 24px;
+            border-right: 1px solid #2a2a2a;
+            text-align: center;
+        }
+
+            .stat-cell:last-child {
+                border-right: none;
+            }
+
+        .stat-num {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 32px;
+            line-height: 1;
+            color: #fff;
+        }
+
+            .stat-num.live-num {
+                color: var(--live);
+            }
+
+        .stat-label {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,.3);
+            margin-top: 3px;
+        }
+
+        /* ── CONTENT ────────────────────────────────────────────────────────── */
+        .content {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* ── STAGE GROUP ────────────────────────────────────────────────────── */
+        .stage-heading {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin: 36px 0 16px;
+        }
+
+            .stage-heading:first-child {
+                margin-top: 0;
+            }
+
+        .stage-name {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 22px;
+            letter-spacing: 1.5px;
+            color: var(--dark);
+            white-space: nowrap;
+        }
+
+        .stage-line {
+            flex: 1;
+            height: 2px;
+            background: var(--border);
+        }
+
+        .stage-count {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--muted);
+            background: var(--border);
+            padding: 2px 10px;
+            border-radius: 100px;
+            white-space: nowrap;
+        }
+
+        /* ── MATCH CARD ─────────────────────────────────────────────────────── */
+        .match-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--r);
+            margin-bottom: 12px;
+            overflow: hidden;
+            transition: box-shadow .2s, transform .15s;
+        }
+
+            .match-card:hover {
+                box-shadow: 0 4px 20px rgba(0,0,0,.08);
+                transform: translateY(-2px);
+            }
+
+            /* Top accent stripe per status */
+            .match-card.accent-live {
+                border-top: 3px solid var(--live);
+            }
+
+            .match-card.accent-done {
+                border-top: 3px solid var(--green);
+            }
+
+            .match-card.accent-upcoming {
+                border-top: 3px solid var(--border);
+            }
+
+        /* ── MATCH MAIN ROW ─────────────────────────────────────────────────── */
+        .match-row {
+            display: grid;
+            grid-template-columns: 1fr 160px 1fr;
+            align-items: center;
+            padding: 20px 24px;
+            gap: 8px;
+        }
+
+        /* Home side */
+        .team-home {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Away side */
+        .team-away {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 12px;
+            flex-direction: row-reverse;
+        }
+
+        .team-logo {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .team-logo-ph {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: var(--bg);
+            border: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 16px;
+            color: var(--mid);
+            flex-shrink: 0;
+        }
+
+        .team-name {
+            font-family: 'Mulish', sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--dark);
+            line-height: 1.2;
+        }
+
+        /* ── CENTRE BLOCK ───────────────────────────────────────────────────── */
+        .centre {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .scoreline {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .score-n {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 38px;
+            line-height: 1;
+            color: var(--dark);
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .score-dash {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 28px;
+            color: var(--border);
+        }
+
+        .kickoff-time {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 28px;
+            color: var(--muted);
+            letter-spacing: 1px;
+        }
+
+        /* Status badge */
+        .sbadge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 10px;
+            border-radius: 100px;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .abadge-live {
+            background: var(--live-light);
+            color: var(--live);
+            border: 1px solid rgba(232,22,42,.2);
+        }
+
+        .abadge-completed {
+            background: var(--green-light);
+            color: var(--green);
+            border: 1px solid rgba(26,122,62,.2);
+        }
+
+        .abadge-upcoming {
+            background: var(--amber-light);
+            color: var(--amber);
+            border: 1px solid rgba(212,135,10,.2);
+        }
+
+        .live-blink {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--live);
+            animation: blink 1s infinite;
+        }
+
+        @@keyframes blink {
+            50% {
+                opacity: 0;
+            }
+        }
+
+        .match-date-sub {
+            font-size: 11px;
+            color: var(--muted);
+        }
+
+        /* ── GOALS PANEL ────────────────────────────────────────────────────── */
+        .goals-panel {
+            border-top: 1px solid var(--border);
+            padding: 12px 24px;
+            background: #fafaf8;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .goals-panel-label {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-right: 4px;
+        }
+
+        .goal-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            padding: 3px 10px;
+            font-size: 11px;
+            color: var(--mid);
+        }
+
+            .goal-chip i {
+                color: var(--green);
+                font-size: 10px;
+            }
+
+                .goal-chip i.pen {
+                    color: var(--amber);
+                }
+
+            .goal-chip .gmin {
+                font-weight: 700;
+                color: var(--muted);
+                font-size: 10px;
+            }
+
+            .goal-chip .gtag {
+                font-size: 10px;
+                color: var(--muted);
+            }
+
+        .no-goals-txt {
+            font-size: 12px;
+            color: var(--muted);
+            font-style: italic;
+        }
+
+        /* ── ADMIN ACTIONS ──────────────────────────────────────────────────── */
+        .match-actions {
+            border-top: 1px solid var(--border);
+            padding: 10px 24px;
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+            background: #fafaf8;
+        }
+
+        .btn-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            text-decoration: none;
+            border: 1px solid transparent;
+            transition: background .15s;
+        }
+
+        .btn-score {
+            background: #111;
+            color: #fff;
+        }
+
+            .btn-score:hover {
+                background: #333;
+                color: #fff;
+            }
+
+        .btn-detail {
+            background: var(--bg);
+            color: var(--mid);
+            border-color: var(--border);
+        }
+
+            .btn-detail:hover {
+                background: var(--border);
+            }
+
+        /* ── EMPTY STATE ────────────────────────────────────────────────────── */
+        .empty-state {
+            text-align: center;
+            padding: 80px 24px;
+            color: var(--muted);
+        }
+
+            .empty-state i {
+                font-size: 56px;
+                display: block;
+                margin-bottom: 16px;
+                opacity: .25;
+            }
+
+            .empty-state h3 {
+                font-size: 20px;
+                color: var(--mid);
+                margin-bottom: 8px;
+            }
+
+        /* ── BACK BUTTON ────────────────────────────────────────────────────── */
+        .back-bar {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 0 24px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 32px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: color .15s;
+        }
+
+            .back-link:hover {
+                color: var(--dark);
+            }
+    </style>
+</head>
+
+
+<body>
+
+    <!-- HERO -->
+    <div class="hero">
+        <div class="hero-bg-text">MATCHES</div>
+        <div class="hero-inner">
+            <div class="hero-breadcrumb">
+                <a asp-action="Index">Tournaments</a>
+                <i class="bi bi-chevron-right"></i>
+                <a asp-action="Details" asp-route-id="@Model.TournamentId">@Model.TournamentName</a>
+                <i class="bi bi-chevron-right"></i>
+                <span style="color:rgba(255,255,255,.7)">All Matches </span>
+            </div>
+
+            <h1 class="hero-title">
+                @Model.TournamentName<br />
+                <h1 class="hero-title">
+                                       @if (!string.IsNullOrEmpty(Model.TeamName))
+                    {
+                        <span>@Model.TeamName Matches</span>
+                    }
+                    else
+                    {
+                        <span>All Matches</span>
+                    }
+                </h1>
+               
+            </h1>
+
+            <div class="hero-meta">
+                @if (Model.TournamentStatus == "Active")
+                {
+                    <span class="t-status-badge ts-active"><i class="bi bi-circle-fill" style="font-size:7px;"></i> Active</span>
+                }
+                else if (Model.TournamentStatus == "Completed")
+                {
+                    <span class="t-status-badge ts-completed"><i class="bi bi-check-circle"></i> Completed</span>
+                }
+                else
+                {
+                    <span class="t-status-badge ts-upcoming"><i class="bi bi-clock"></i> Upcoming</span>
+                }
+            </div>
+        </div>
+
+        <!-- Stats bar -->
+        <div class="stats-bar">
+            <div class="stat-cell">
+                <div class="stat-num">@Model.TotalMatches</div>
+                <div class="stat-label">Total</div>
+            </div>
+            <div class="stat-cell">
+                <div class="stat-num live-num">@Model.LiveCount</div>
+                <div class="stat-label">Live</div>
+            </div>
+            <div class="stat-cell">
+                <div class="stat-num">@Model.UpcomingCount</div>
+                <div class="stat-label">Upcoming</div>
+            </div>
+            <div class="stat-cell">
+                <div class="stat-num">@Model.CompletedCount</div>
+                <div class="stat-label">Completed</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- BACK + ACTIONS -->
+    <div class="back-bar">
+        <a asp-action="Details" asp-controller="Tournaments" asp-route-tournamentId="@Model.TournamentId"
+           asp-route-teamId="@Model.TeamId" class="back-link">
+            <i class="bi bi-arrow-left"></i> Back to Tournament
+        </a>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+
+        @if (!Model.GroupedMatches.Any())
+        {
+            <div class="empty-state">
+                <i class="bi bi-calendar-x"></i>
+                <h3>No matches scheduled yet</h3>
+                <p>Add matches from the match management screen.</p>
+            </div>
+        }
+
+        @foreach (var stageGroup in Model.GroupedMatches)
+        {
+            <div class="stage-heading">
+                <div class="stage-name">@stageGroup.Stage</div>
+                <div class="stage-line"></div>
+                <div class="stage-count">@stageGroup.Matches.Count match@(stageGroup.Matches.Count == 1 ? "" : "es")</div>
+            </div>
+
+            @foreach (var match in stageGroup.Matches)
+            {
+                <div class="match-card @match.CardAccentClass">
+
+                    <!-- Main score row -->
+                    <div class="match-row">
+
+                        <!-- Home team -->
+                        <div class="team-home">
+                            @if (!string.IsNullOrEmpty(match.HomeTeamLogo))
+                            {
+                                <img src="@match.HomeTeamLogo" alt="@match.HomeTeamName" class="team-logo" />
+                            }
+                            else
+                            {
+                                <div class="team-logo-ph">@match.HomePlaceholder</div>
+                            }
+                            <div class="team-name">@match.HomeTeamName</div>
+                        </div>
+
+                        <!-- Centre: score or kick-off time + status badge -->
+                        <div class="centre">
+                            @if (match.ScoreAvailable)
+                            {
+                                <div class="scoreline">
+                                    <span class="score-n">@match.HomeScore</span>
+                                    <span class="score-dash">–</span>
+                                    <span class="score-n">@match.AwayScore</span>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="kickoff-time">@match.MatchDate.ToString("HH:mm")</div>
+                            }
+
+                            <div class="sbadge @match.StatusBadgeClass">
+                                @if (match.Status == "Live")
+                                {
+                                    <span class="live-blink"></span>
+                                }
+                                @match.Status
+                            </div>
+
+                            <div class="match-date-sub">@match.MatchDate.ToString("dd MMM yyyy")</div>
+                        </div>
+
+                        <!-- Away team -->
+                        <div class="team-away">
+                            @if (!string.IsNullOrEmpty(match.AwayTeamLogo))
+                            {
+                                <img src="@match.AwayTeamLogo" alt="@match.AwayTeamName" class="team-logo" />
+                            }
+                            else
+                            {
+                                <div class="team-logo-ph">@match.AwayPlaceholder</div>
+                            }
+                            <div class="team-name">@match.AwayTeamName</div>
+                        </div>
+
+                    </div><!-- /match-row -->
+                    <!-- Goals panel -->
+                    @if (match.Status == "Completed" || match.Goals.Any())
+                    {
+                        <div class="goals-panel">
+                            <span class="goals-panel-label"><i class="bi bi-bullseye"></i> Goals</span>
+
+                            @if (!match.Goals.Any())
+                            {
+                                <span class="no-goals-txt">No goal details recorded.</span>
+                            }
+                            else
+                            {
+                                @foreach (var goal in match.Goals)
+                                {
+                                    <span class="goal-chip">
+                                        @if (goal.IsPenalty)
+                                        {
+                                            <i class="bi bi-p-circle-fill pen"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="bi bi-circle-fill"></i>
+                                        }
+                                        @goal.ScorerName
+                                        <span class="gmin">@(goal.Minute)'</span>
+                                        <span class="gtag">@goal.TeamName</span>
+                                        @if (goal.IsPenalty)
+                                        {
+                                            <span style="color:var(--amber);font-size:9px;font-weight:700;">PEN</span>
+                                        }
+                                    </span>
+                                }
+                            }
+                        </div>
+                    }
+
+                    <!-- Admin action buttons -->
+                    <div class="match-actions">
+                        <a asp-action="MatchDetails" asp-controller="Tournaments"
+                           asp-route-id="@match.MatchId" class="btn-action btn-detail">
+                            <i class="bi bi-eye"></i> Details
+                        </a>
+                        <a asp-action="UpdateScore" asp-controller="Tournaments"
+                           asp-route-id="@match.MatchId" class="btn-action btn-score">
+                            <i class="bi bi-pencil-fill"></i> Update Score
+                        </a>
+                    </div>
+
+                </div>
+
+                <!-- /match-card -->
+            }
+        }
+
+    </div><!-- /content -->
+
+</body>
+
+
+</html>
+</html>
+
