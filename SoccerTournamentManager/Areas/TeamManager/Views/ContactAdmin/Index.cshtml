@@ -1,0 +1,32 @@
+@model TeamContactAdminRequest
+
+@{
+    ViewData["Title"] = "Contact tournament administrators";
+}
+
+<main class="container py-4">
+    <h1 class="h3">Contact tournament administrators</h1>
+    <p class="text-secondary">Messages include your team and account email so the administrators can reply.</p>
+    <form asp-action="Index" method="post" class="row g-3">
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="col-12">
+            <label asp-for="Subject" class="form-label"></label>
+            <input asp-for="Subject" class="form-control" />
+            <span asp-validation-for="Subject" class="text-danger"></span>
+        </div>
+        <div class="col-12">
+            <label asp-for="Message" class="form-label"></label>
+            <textarea asp-for="Message" rows="6" class="form-control"></textarea>
+            <span asp-validation-for="Message" class="text-danger"></span>
+        </div>
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary">Send to administrators</button>
+            <a asp-area="TeamManager" asp-controller="Team" asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+        </div>
+    </form>
+</main>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

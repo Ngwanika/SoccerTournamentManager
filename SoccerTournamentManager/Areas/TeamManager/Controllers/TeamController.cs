@@ -1,125 +1,128 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using SoccerTournament.DataAccess.Data;
+using Microsoft.AspNetCore.Hosting;
 using SoccerTournament.DataAccess.Repository.IRepository;
 using SoccerTournament.Models;
 using SoccerTournament.Utility;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Hosting;
 
 namespace SoccerTournamentManager.Areas.TeamManager.Controllers
 {
     [Area("TeamManager")]
-    [Authorize(Roles = SD.Role_TeamMananger)]
+    [Authorize(Roles = SD.Role_TeamManager + "," + SD.Role_TeamManagerLegacy)]
 
     public class TeamController : Controller
     {
-        private readonly IUnitOfWork _unitOfWork;       
-        private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
         public TeamController(IUnitOfWork unitOfWork,
             UserManager<ApplicationUser> userManager,
-            RoleManager<IdentityRole> roleManager,
-            SignInManager<ApplicationUser> signInManager, 
             IWebHostEnvironment webHostEnvironment)
         {
             _unitOfWork = unitOfWork;
-            _roleManager = roleManager;            
             _userManager = userManager;
-             _signInManager = signInManager;
             _webHostEnvironment = webHostEnvironment;
         }
 
         public async Task<IActionResult> Index()
         {
-            var user = await _userManager.GetUserAsync(User);
-
-            if (user == null)
-                return Challenge();
-
-            var teamId = user.TeamId;
-
-            if (teamId == 0)
+            var teamId = await GetAssignedTeamIdAsync();
+            if (teamId == null)
                 return NotFound("No team assigned.");
 
-            // var team = _unitOfWork.Team.GetFirstOrDefault(u => u.TeamId == teamId);
-            Team? team = _unitOfWork.Team.Get(u => u.TeamId == teamId);
+            Team? team = _unitOfWork.Team.Get(u => u.TeamId == teamId.Value);
             if (team == null)
                 return NotFound("Team not found.");
 
             return View(team);
         }
 
-        public IActionResult Upsert(int? id)
+        public async Task<IActionResult> Upsert(int? id)
         {
-            if (id == null || id == 0)
+            var teamId = await GetAssignedTeamIdAsync();
+            if (teamId == null || id != teamId)
             {
-                //create
-                Team obj = new Team();
+                return NotFound();
+            }
+
+            var team = _unitOfWork.Team.Get(u => u.TeamId == teamId.Value);
+            return team == null ? NotFound() : View(team);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Upsert(Team obj, IFormFile? file)
+        {
+            var teamId = await GetAssignedTeamIdAsync();
+            if (teamId == null || obj.TeamId != teamId)
+            {
+                return NotFound();
+            }
+
+            var existingTeam = _unitOfWork.Team.Get(team => team.TeamId == teamId.Value);
+            if (existingTeam == null)
+            {
+                return NotFound();
+            }
+
+            if (!ModelState.IsValid)
+            {
                 return View(obj);
             }
-            else
+            if (!string.IsNullOrWhiteSpace(obj.WhatsAppGroupLink)
+                && (!Uri.TryCreate(obj.WhatsAppGroupLink, UriKind.Absolute, out var inviteUri)
+                    || inviteUri.Scheme != Uri.UriSchemeHttps
+                    || !inviteUri.Host.Equals("chat.whatsapp.com", StringComparison.OrdinalIgnoreCase)))
             {
-                //update
-                Team? TeamFromDb = _unitOfWork.Team.Get(u => u.TeamId == id);
-                return View(TeamFromDb);
+                ModelState.AddModelError(nameof(obj.WhatsAppGroupLink),
+                    "Enter a WhatsApp invite URL from https://chat.whatsapp.com/.");
+                return View(obj);
             }
+
+            var wwwRootPath = _webHostEnvironment.WebRootPath;
+            if (file != null)
+            {
+                var fileName = Guid.NewGuid() + Path.GetExtension(file.FileName);
+                var teamPath = Path.Combine(wwwRootPath, "images", "team");
+                if (!string.IsNullOrEmpty(existingTeam.LogoUrl))
+                {
+                    var oldImagePath = Path.Combine(wwwRootPath, existingTeam.LogoUrl.TrimStart('\\', '/'));
+                    if (System.IO.File.Exists(oldImagePath))
+                    {
+                        System.IO.File.Delete(oldImagePath);
+                    }
+                }
+
+                Directory.CreateDirectory(teamPath);
+                await using (var fileStream = new FileStream(Path.Combine(teamPath, fileName), FileMode.Create))
+                {
+                    await file.CopyToAsync(fileStream);
+                }
+
+                existingTeam.LogoUrl = $"/images/team/{fileName}";
+            }
+
+            existingTeam.TeamName = obj.TeamName;
+            existingTeam.Abbreviation = obj.Abbreviation;
+            existingTeam.CoachName = obj.CoachName;
+            existingTeam.Homestadium = obj.Homestadium;
+            existingTeam.ContactNumber1 = obj.ContactNumber1;
+            existingTeam.ContactNumber2 = obj.ContactNumber2;
+            existingTeam.Email = obj.Email;
+            existingTeam.WhatsAppGroupLink = obj.WhatsAppGroupLink;
+            existingTeam.Established = obj.Established;
+            _unitOfWork.Team.Update(existingTeam);
+            _unitOfWork.Save();
+            TempData["success"] = "Team updated successfully";
+            return RedirectToAction(nameof(Index));
         }
-        [HttpPost]
-        public IActionResult Upsert(Team obj, IFormFile? file)
+
+        private async Task<int?> GetAssignedTeamIdAsync()
         {
-            if (ModelState.IsValid)
-            {
-                string wwwRootPath = _webHostEnvironment.WebRootPath;
-                if (file != null)
-                {
-                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-                    string teamPath = Path.Combine(wwwRootPath, @"images\team");
-                    if (!string.IsNullOrEmpty(obj.LogoUrl))
-                    {
-                        //delete the old image
-                        var oldImagePath =
-                            Path.Combine(wwwRootPath, obj.LogoUrl.TrimStart('\\'));
-
-                        if (System.IO.File.Exists(oldImagePath))
-                        {
-                            System.IO.File.Delete(oldImagePath);
-                        }
-                    }
-                    using (var fileStream = new FileStream(Path.Combine(teamPath, fileName), FileMode.Create))
-                    {
-                        file.CopyTo(fileStream);
-                    }
-                    obj.LogoUrl = @"\images\team\" + fileName;
-
-                }
-
-
-                if (obj.TeamId == 0)
-                {
-                    //create
-                    _unitOfWork.Team.Add(obj);
-                    TempData["success"] = "Team created successfully";
-                }
-                else
-                {
-                    //update
-                    _unitOfWork.Team.Update(obj);
-                    TempData["success"] = "Team updated successfully";
-                }
-                _unitOfWork.Save();
-                return RedirectToAction("Index");
-            }
-            return View(obj);
-
+            var user = await _userManager.GetUserAsync(User);
+            return user?.TeamId is > 0 ? user.TeamId : null;
         }
     }
 }
-
-

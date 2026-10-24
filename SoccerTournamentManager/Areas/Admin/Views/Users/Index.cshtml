@@ -1,5 +1,93 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+@model IReadOnlyList<AdminUserRoleViewModel>
+
 @{
+    ViewData["Title"] = "User access";
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 py-4">
+    <div>
+        <h1 class="mb-1">User access</h1>
+        <p class="text-muted mb-0">Assign roles and teams to registered accounts.</p>
+    </div>
+</div>
+
+@if (Model.Count == 0)
+{
+    <div class="alert alert-secondary" role="status">There are no registered users yet.</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-striped align-middle">
+            <thead>
+                <tr>
+                    <th scope="col">User</th>
+                    <th scope="col">Current roles</th>
+                    <th scope="col">Role</th>
+                    <th scope="col">Team</th>
+                    <th scope="col"><span class="visually-hidden">Save access</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model)
+                {
+                    <tr>
+                        <td>
+                            <div class="fw-semibold">@user.Name</div>
+                            <div class="small text-muted">@user.Email</div>
+                        </td>
+                        <td>@user.CurrentRoles</td>
+                        <td colspan="3">
+                            <form asp-action="UpdateRole" method="post" class="row g-2 align-items-center">
+                                <input type="hidden" name="userId" value="@user.UserId" />
+                                <div class="col-md-5">
+                                    <label class="visually-hidden" for="role-@user.UserId">Role for @user.Email</label>
+                                    <select class="form-select" id="role-@user.UserId" name="role">
+                                        @foreach (var role in user.Roles)
+                                        {
+                                            if (role == user.SelectedRole)
+                                            {
+                                                <option value="@role" selected>@role</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@role">@role</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-md-5">
+                                    <label class="visually-hidden" for="team-@user.UserId">Team for @user.Email</label>
+                                    <select class="form-select" id="team-@user.UserId" name="teamId">
+                                        @if (user.TeamId == null)
+                                        {
+                                            <option value="" selected>No team assigned</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="">No team assigned</option>
+                                        }
+                                        @foreach (var team in user.Teams)
+                                        {
+                                            if (team.TeamId == user.TeamId)
+                                            {
+                                                <option value="@team.TeamId" selected>@team.TeamName</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@team.TeamId">@team.TeamName</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <button type="submit" class="btn btn-primary w-100">Save</button>
+                                </div>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 }

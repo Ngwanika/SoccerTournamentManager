@@ -223,32 +223,32 @@
                             <option value="League">League</option>
                         </select>
                     </div>
-                    <div class="col-md-6">
+                  @*   <div class="col-md-6">
                         <label asp-for="Location" class="form-label text-secondary"></label>
                         <input asp-for="Location" class="form-control bg-dark-input border-0 text-white py-2" />
-                    </div>
+                    </div> *@
                     <div class="col-md-6">
                         <label asp-for="DeadlineDate" class="form-label text-secondary"></label>
-                        <input asp-for="DeadlineDate" type="date" class="form-control bg-dark-input border-0 text-white py-2" value="@Model.DeadlineDate?.ToString("yyyy-MM-dd")" />
+                        <input asp-for="DeadlineDate" type="date" class="form-control bg-dark-input border-0 text-white py-2" value="@Model.DeadlineDate?.ToString("yyyy-MM-dd")" readonly />
                     </div>
                     <div class="col-md-6">
                         <label asp-for="StartDate" class="form-label text-secondary"></label>
-                        <input asp-for="StartDate" type="date" class="form-control bg-dark-input border-0 text-white py-2" value="@Model.StartDate?.ToString("yyyy-MM-dd")" />
+                        <input asp-for="StartDate" type="date" class="form-control bg-dark-input border-0 text-white py-2" value="@Model.StartDate?.ToString("yyyy-MM-dd")" readonly />
                     </div>
                     <div class="col-md-6">
                         <label asp-for="EndDate" class="form-label text-secondary"></label>
-                        <input asp-for="EndDate" type="date" class="form-control bg-dark-input border-0 text-white py-2" value="@Model.EndDate?.ToString("yyyy-MM-dd")" />
+                        <input asp-for="EndDate" type="date" class="form-control bg-dark-input border-0 text-white py-2" value="@Model.EndDate?.ToString("yyyy-MM-dd")" readonly />
                     </div>
                     <div class="col-md-6">
                         <label asp-for="MaxParticipants" class="form-label text-secondary"></label>
                         <input asp-for="MaxParticipants" class="form-control bg-dark-input border-0 text-white py-2" />
                     </div>
-                    <div class="col-md-6">
+       @*              <div class="col-md-6">
                         <label asp-for="EntryFee" class="form-label text-secondary"></label>
                         <div class="input-group">
                             <input asp-for="EntryFee" class="form-control bg-dark-input border-0 text-white py-2" />
                         </div>
-                    </div>
+                    </div> *@
                     <div class="col-12">
                         <label asp-for="Description" class="form-label text-secondary"></label>
                         <textarea asp-for="Description" class="form-control bg-dark-input border-0 text-white" rows="3"></textarea>

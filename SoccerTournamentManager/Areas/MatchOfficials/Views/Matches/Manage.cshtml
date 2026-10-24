@@ -1,0 +1,155 @@
+@model MatchOfficialWorkspaceViewModel
+
+@{
+    ViewData["Title"] = "Manage match";
+}
+
+<main class="container py-4">
+    <p><a asp-action="Index" class="link-secondary">← Match list</a></p>
+    <div class="d-flex flex-wrap justify-content-between gap-3 mb-4">
+        <div>
+            <h1 class="h3">@Model.Match.HomeTeam?.TeamName vs @Model.Match.AwayTeam?.TeamName</h1>
+            <p class="text-secondary mb-0">@Model.TournamentName · @Model.Match.Stage · @Model.Match.MatchDate.ToLocalTime().ToString("g")</p>
+        </div>
+        <div class="text-end">
+            <div class="h4">@((Model.Match.HomeScore ?? 0)) - @((Model.Match.AwayScore ?? 0))</div>
+            <span class="badge bg-secondary">@Model.Match.Status</span>
+        </div>
+    </div>
+
+    <div class="d-flex flex-wrap gap-2 mb-4">
+        @if (Model.Match.Status is "Upcoming" or "Scheduled")
+        {
+            <form asp-action="UpdateStatus" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@Model.Match.MatchId" />
+                <input type="hidden" name="status" value="Live" />
+                <button class="btn btn-success" type="submit">Start match</button>
+            </form>
+        }
+        @if (Model.Match.Status == "Live")
+        {
+            <form asp-action="UpdateStatus" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@Model.Match.MatchId" />
+                <input type="hidden" name="status" value="Completed" />
+                <button class="btn btn-primary" type="submit">Finish match</button>
+            </form>
+        }
+        <a asp-area="Customer" asp-controller="Home" asp-action="MatchDetails"
+           asp-route-id="@Model.Match.MatchId" class="btn btn-outline-secondary">Public match details</a>
+    </div>
+
+    @if (Model.Match.Status == "Live")
+    {
+        <section class="mb-5">
+            <h2 class="h4">Record a match event</h2>
+            <form asp-action="RecordEvent" method="post" class="row g-3">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@Model.Match.MatchId" />
+                <div class="col-md-3">
+                    <label for="event-type" class="form-label">Event</label>
+                    <select id="event-type" name="EventType" class="form-select" required>
+                        @foreach (var type in (string[])ViewBag.EventTypes)
+                        {
+                            <option value="@type">@type</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label for="event-minute" class="form-label">Minute</label>
+                    <input id="event-minute" type="number" name="EventMinute" min="0" max="150" value="0" class="form-control" required />
+                </div>
+                <div class="col-md-3">
+                    <label for="team-id" class="form-label">Team</label>
+                    <select id="team-id" name="TeamId" class="form-select" required>
+                        <option value="@Model.Match.HomeTeamId">@Model.Match.HomeTeam?.TeamName</option>
+                        <option value="@Model.Match.AwayTeamId">@Model.Match.AwayTeam?.TeamName</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="player-id" class="form-label">Player (optional)</label>
+                    <select id="player-id" name="PlayerId" class="form-select">
+                        <option value="">No player selected</option>
+                        @foreach (var player in Model.Players)
+                        {
+                            <option value="@player.PlayerId" data-team-id="@player.TeamId">
+                                @player.FirstName @player.LastName · #@player.JerseyNumber
+                            </option>
+                        }
+                    </select>
+                </div>
+                <div class="col-12">
+                    <label for="event-notes" class="form-label">Notes (optional; include “penalty” for a penalty goal)</label>
+                    <input id="event-notes" name="Notes" maxlength="500" class="form-control" />
+                </div>
+                <div class="col-12"><button type="submit" class="btn btn-primary">Save event</button></div>
+            </form>
+        </section>
+    }
+
+    <section class="mb-5">
+        <h2 class="h4">Recorded events</h2>
+        @if (Model.Events.Count == 0)
+        {
+            <p class="text-secondary">No events recorded yet.</p>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead><tr><th>Minute</th><th>Event</th><th>Team</th><th>Player</th><th>Notes</th></tr></thead>
+                    <tbody>
+                        @foreach (var item in Model.Events)
+                        {
+                            <tr>
+                                <td>@item.EventMinute'</td><td>@item.EventType</td><td>@item.Team?.TeamName</td>
+                                <td>@(item.Player == null ? "—" : $"{item.Player.FirstName} {item.Player.LastName}")</td>
+                                <td>@item.Notes</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </section>
+
+    <section>
+        <h2 class="h4">Match audit history</h2>
+        @if (Model.AuditHistory.Count == 0)
+        {
+            <p class="text-secondary">No changes have been recorded.</p>
+        }
+        else
+        {
+            <ol class="list-group list-group-flush">
+                @foreach (var audit in Model.AuditHistory)
+                {
+                    <li class="list-group-item bg-transparent border-secondary">
+                        <strong>@audit.Action</strong> · @audit.Details
+                        <span class="d-block small text-secondary">@audit.ActorName · @audit.CreatedAtUtc.ToLocalTime().ToString("g")</span>
+                    </li>
+                }
+            </ol>
+        }
+    </section>
+</main>
+
+@section Scripts {
+    <script>
+        (() => {
+            const team = document.getElementById("team-id");
+            const player = document.getElementById("player-id");
+            if (!team || !player) return;
+            const updatePlayers = () => {
+                for (const option of player.options) {
+                    if (!option.value) continue;
+                    option.hidden = option.dataset.teamId !== team.value;
+                }
+                if (player.selectedOptions[0]?.hidden) player.value = "";
+            };
+            team.addEventListener("change", updatePlayers);
+            updatePlayers();
+        })();
+    </script>
+}

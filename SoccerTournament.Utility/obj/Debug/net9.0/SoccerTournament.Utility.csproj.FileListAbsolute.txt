@@ -1,0 +1,13 @@
+C:\Users\Silly\.copilot\repos\copilot-worktrees\SoccerTournamentManager\ngwanika-effective-system\SoccerTournament.Utility\bin\Debug\net9.0\SoccerTournament.Utility.deps.json
+C:\Users\Silly\.copilot\repos\copilot-worktrees\SoccerTournamentManager\ngwanika-effective-system\SoccerTournament.Utility\bin\Debug\net9.0\SoccerTournament.Utility.dll
+C:\Users\Silly\.copilot\repos\copilot-worktrees\SoccerTournamentManager\ngwanika-effective-system\SoccerTournament.Utility\bin\Debug\net9.0\SoccerTournament.Utility.pdb
+C:\Users\Silly\.copilot\repos\copilot-worktrees\SoccerTournamentManager\ngwanika-effective-system\SoccerTournament.Utility\obj\Debug\net9.0\SoccerTournament.Utility.csproj.AssemblyReference.cache
+C:\Users\Silly\.copilot\repos\copilot-worktrees\SoccerTournamentManager\ngwanika-effective-system\SoccerTournament.Utility\obj\Debug\net9.0\SoccerTournament.Utility.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Silly\.copilot\repos\copilot-worktrees\SoccerTournamentManager\ngwanika-effective-system\SoccerTournament.Utility\obj\Debug\net9.0\SoccerTournament.Utility.AssemblyInfoInputs.cache
+C:\Users\Silly\.copilot\repos\copilot-worktrees\SoccerTournamentManager\ngwanika-effective-system\SoccerTournament.Utility\obj\Debug\net9.0\SoccerTournament.Utility.AssemblyInfo.cs
+C:\Users\Silly\.copilot\repos\copilot-worktrees\SoccerTournamentManager\ngwanika-effective-system\SoccerTournament.Utility\obj\Debug\net9.0\SoccerTournament.Utility.csproj.CoreCompileInputs.cache
+C:\Users\Silly\.copilot\repos\copilot-worktrees\SoccerTournamentManager\ngwanika-effective-system\SoccerTournament.Utility\obj\Debug\net9.0\SoccerTournament.Utility.sourcelink.json
+C:\Users\Silly\.copilot\repos\copilot-worktrees\SoccerTournamentManager\ngwanika-effective-system\SoccerTournament.Utility\obj\Debug\net9.0\SoccerTournament.Utility.dll
+C:\Users\Silly\.copilot\repos\copilot-worktrees\SoccerTournamentManager\ngwanika-effective-system\SoccerTournament.Utility\obj\Debug\net9.0\refint\SoccerTournament.Utility.dll
+C:\Users\Silly\.copilot\repos\copilot-worktrees\SoccerTournamentManager\ngwanika-effective-system\SoccerTournament.Utility\obj\Debug\net9.0\SoccerTournament.Utility.pdb
+C:\Users\Silly\.copilot\repos\copilot-worktrees\SoccerTournamentManager\ngwanika-effective-system\SoccerTournament.Utility\obj\Debug\net9.0\ref\SoccerTournament.Utility.dll

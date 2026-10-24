@@ -1,0 +1,178 @@
+@model TournamentTeamsManageViewModel
+
+@{
+    ViewData["Title"] = "Manage tournament teams";
+}
+
+<header class="d-flex flex-wrap align-items-start justify-content-between gap-3 py-4">
+    <div>
+        <h1 class="mb-1">Manage teams</h1>
+        <p class="text-muted mb-0">@Model.TournamentName · @Model.ParticipatingTeams.Count participating teams</p>
+    </div>
+    <div class="d-flex flex-wrap gap-2">
+        <a asp-area="Admin" asp-controller="Matches" asp-action="Index"
+           asp-route-tournamentId="@Model.TournamentId" class="btn btn-outline-primary">
+            Manage fixtures and scores (@Model.MatchCount)
+        </a>
+        <a asp-area="Customer" asp-controller="Home" asp-action="Brackets"
+           asp-route-id="@Model.TournamentId" class="btn btn-outline-secondary">
+            View bracket
+        </a>
+    </div>
+</header>
+
+@if (Model.AvailableTeams.Count > 0 && !Model.DrawFinalized && Model.MatchCount == 0)
+{
+    <form asp-action="AddTeam" method="post" class="row g-2 align-items-end mb-4">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="tournamentId" value="@Model.TournamentId" />
+        <div class="col-md-8">
+            <label for="teamId" class="form-label">Add an existing team</label>
+            <select id="teamId" name="teamId" class="form-select" required>
+                <option value="">Choose a team</option>
+                @foreach (var team in Model.AvailableTeams)
+                {
+                    <option value="@team.TeamId">@team.TeamName (@team.PlayerCount players)</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-4">
+            <button type="submit" class="btn btn-primary">Add to tournament</button>
+        </div>
+    </form>
+}
+
+@if (Model.ParticipatingTeams.Count == 0)
+{
+    <div class="alert alert-info" role="status">No teams have joined this tournament. Add a team to begin.</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-striped align-middle">
+            <thead>
+                <tr><th>Team</th><th>Roster</th><th>Joined</th><th>Management</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var team in Model.ParticipatingTeams)
+                {
+                    <tr>
+                        <td class="fw-semibold">@team.TeamName</td>
+                        <td>@team.PlayerCount players</td>
+                        <td>@team.JoinedAt?.ToLocalTime().ToString("d")</td>
+                        <td>
+                            <div class="d-flex flex-wrap gap-2">
+                                @if (User.IsInRole(SoccerTournament.Utility.SD.Role_Admin))
+                                {
+                                    <a asp-area="Admin" asp-controller="Player" asp-action="Index"
+                                       asp-route-id="@team.TeamId" class="btn btn-sm btn-outline-primary">
+                                        Manage roster
+                                    </a>
+                                }
+                                else
+                                {
+                                    <span class="text-muted small align-self-center">Roster managed by the team</span>
+                                }
+                                @if (!Model.DrawFinalized && !team.HasFixtures)
+                                {
+                                    <form asp-action="RemoveTeam" method="post">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="tournamentId" value="@Model.TournamentId" />
+                                        <input type="hidden" name="teamId" value="@team.TeamId" />
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
+                                    </form>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@if (!Model.ParticipatingTeams.Any())
+{
+    <hr />
+}
+<section class="mt-5">
+    <h2 class="h4">Create the draw and fixtures</h2>
+    <p class="text-muted">
+        A random draw is saved once, or arrange teams below to set a seed order.
+        Fixtures cannot be redrawn after a match has been generated.
+    </p>
+    @if (Model.DrawFinalized || Model.MatchCount > 0)
+    {
+        @if (Model.MatchCount > 0)
+        {
+            <div class="alert alert-success" role="status">
+                @Model.MatchCount fixtures have been generated. The draw and team list are locked.
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-info" role="status">
+                The draw has been finalized and the team list is locked.
+            </div>
+        }
+    }
+    else if (Model.ParticipatingTeams.Count >= 2)
+    {
+        <div class="d-flex flex-wrap gap-3">
+            <form asp-action="FinalizeDraw" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="tournamentId" value="@Model.TournamentId" />
+                <input type="hidden" name="randomize" value="true" />
+                <button type="submit" class="btn btn-primary">Save random draw and generate fixtures</button>
+            </form>
+            <form asp-action="FinalizeDraw" method="post" id="seed-order-form">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="tournamentId" value="@Model.TournamentId" />
+                <input type="hidden" name="randomize" value="false" />
+                <input type="hidden" name="orderedTeamIds" id="ordered-team-ids" />
+                <button type="submit" class="btn btn-outline-primary">Save arranged seeds and generate fixtures</button>
+            </form>
+        </div>
+        <ol id="seed-order" class="list-group list-group-numbered mt-3" aria-label="Team seed order">
+            @foreach (var team in Model.ParticipatingTeams)
+            {
+                <li class="list-group-item d-flex justify-content-between align-items-center"
+                    data-team-id="@team.TeamId">
+                    <span>@team.TeamName</span>
+                    <span class="btn-group" role="group" aria-label="Change seed for @team.TeamName">
+                        <button type="button" class="btn btn-sm btn-outline-secondary" data-move="-1" aria-label="Move @team.TeamName up">↑</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" data-move="1" aria-label="Move @team.TeamName down">↓</button>
+                    </span>
+                </li>
+            }
+        </ol>
+    }
+</section>
+
+@section Scripts {
+    <script>
+        (() => {
+            const list = document.getElementById("seed-order");
+            const form = document.getElementById("seed-order-form");
+            const output = document.getElementById("ordered-team-ids");
+            if (!list || !form || !output) return;
+
+            list.addEventListener("click", event => {
+                const button = event.target.closest("button[data-move]");
+                if (!button) return;
+                const row = button.closest("li");
+                const rows = Array.from(list.children);
+                const index = rows.indexOf(row);
+                const target = rows[index + Number(button.dataset.move)];
+                if (!target) return;
+                if (button.dataset.move === "-1") list.insertBefore(row, target);
+                else list.insertBefore(target, row);
+            });
+
+            form.addEventListener("submit", () => {
+                output.value = JSON.stringify(
+                    Array.from(list.querySelectorAll("li")).map(row => Number(row.dataset.teamId)));
+            });
+        })();
+    </script>
+}

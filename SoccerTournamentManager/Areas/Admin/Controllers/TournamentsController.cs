@@ -1,20 +1,28 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using SoccerTournament.DataAccess.Data;
 using SoccerTournament.DataAccess.Repository.IRepository;
 using SoccerTournament.Models;
 using SoccerTournament.Models.ViewModels;
+using SoccerTournament.Utility;
 
 namespace SoccerTournamentManager.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = SD.Role_Admin + "," + SD.Role_TournamentManager)]
     public class TournamentsController : Controller
     {
         
         private readonly IUnitOfWork _unitOfWork;
-        public TournamentsController(IUnitOfWork unitOfWork)
+        private readonly ApplicationDbContext _dbContext;
+        public TournamentsController(
+            IUnitOfWork unitOfWork,
+            ApplicationDbContext dbContext)
         {
             _unitOfWork = unitOfWork;
+            _dbContext = dbContext;
         }
 
         // ======================
@@ -326,12 +334,22 @@ namespace SoccerTournamentManager.Areas.Admin.Controllers
 
         // POST: Approve or Reject
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult ReviewRegistration(int registrationId, string decision, string? adminNotes)
         {
             var reg = _unitOfWork.TournamentRegistration
                 .Get(r => r.RegistrationId == registrationId);
 
             if (reg == null) return NotFound();
+            if (decision is not ("Approved" or "Rejected"))
+                return BadRequest("Choose Approved or Rejected.");
+            if (decision == "Approved"
+                && (_dbContext.TournamentDraws.Any(draw => draw.TournamentId == reg.TournamentId)
+                    || _dbContext.Matches.Any(match => match.TournamentId == reg.TournamentId)))
+            {
+                TempData["error"] = "This tournament's draw is locked. New teams cannot be approved after fixtures are generated.";
+                return RedirectToAction("ManageRegistrations", new { tournamentId = reg.TournamentId });
+            }
 
             reg.Status = decision; // "Approved" or "Rejected"
             reg.ReviewedDate = DateTime.Now;

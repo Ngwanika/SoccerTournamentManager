@@ -9,6 +9,7 @@ namespace SoccerTournament.Models
         public int MatchId { get; set; }
 
         public int TournamentId { get; set; }
+        public Tournament? Tournament { get; set; }
 
         public DateTime MatchDate { get; set; }
 
@@ -20,6 +21,18 @@ namespace SoccerTournament.Models
 
         public int? AwayScore { get; set; }
 
+        public int? WinnerTeamId { get; set; }
+
+        public int? BracketRound { get; set; }
+
+        public int? BracketPosition { get; set; }
+
+        [MaxLength(450)]
+        public string? AssignedOfficialUserId { get; set; }
+
+        [MaxLength(450)]
+        public string? AssistantOfficialUserId { get; set; }
+
         [ForeignKey(nameof(HomeTeam))]
         public int HomeTeamId { get; set; }
         public Team? HomeTeam { get; set; }
@@ -29,5 +42,6 @@ namespace SoccerTournament.Models
         public Team? AwayTeam { get; set; }
 
         public virtual ICollection<Goal> Goals { get; set; } = new List<Goal>();
+        public virtual ICollection<MatchEvent> Events { get; set; } = new List<MatchEvent>();
     }
 }

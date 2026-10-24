@@ -1,0 +1,16 @@
+C:\Users\Silly\.copilot\repos\copilot-worktrees\SoccerTournamentManager\ngwanika-effective-system\SoccerTournament.DataAccess\bin\Debug\net9.0\SoccerTournament.DataAccess.deps.json
+C:\Users\Silly\.copilot\repos\copilot-worktrees\SoccerTournamentManager\ngwanika-effective-system\SoccerTournament.DataAccess\bin\Debug\net9.0\SoccerTournament.DataAccess.dll
+C:\Users\Silly\.copilot\repos\copilot-worktrees\SoccerTournamentManager\ngwanika-effective-system\SoccerTournament.DataAccess\bin\Debug\net9.0\SoccerTournament.DataAccess.pdb
+C:\Users\Silly\.copilot\repos\copilot-worktrees\SoccerTournamentManager\ngwanika-effective-system\SoccerTournament.DataAccess\bin\Debug\net9.0\SoccerTournament.Models.dll
+C:\Users\Silly\.copilot\repos\copilot-worktrees\SoccerTournamentManager\ngwanika-effective-system\SoccerTournament.DataAccess\bin\Debug\net9.0\SoccerTournament.Models.pdb
+C:\Users\Silly\.copilot\repos\copilot-worktrees\SoccerTournamentManager\ngwanika-effective-system\SoccerTournament.DataAccess\obj\Debug\net9.0\SoccerTournament.DataAccess.csproj.AssemblyReference.cache
+C:\Users\Silly\.copilot\repos\copilot-worktrees\SoccerTournamentManager\ngwanika-effective-system\SoccerTournament.DataAccess\obj\Debug\net9.0\SoccerTournament.DataAccess.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Silly\.copilot\repos\copilot-worktrees\SoccerTournamentManager\ngwanika-effective-system\SoccerTournament.DataAccess\obj\Debug\net9.0\SoccerTournament.DataAccess.AssemblyInfoInputs.cache
+C:\Users\Silly\.copilot\repos\copilot-worktrees\SoccerTournamentManager\ngwanika-effective-system\SoccerTournament.DataAccess\obj\Debug\net9.0\SoccerTournament.DataAccess.AssemblyInfo.cs
+C:\Users\Silly\.copilot\repos\copilot-worktrees\SoccerTournamentManager\ngwanika-effective-system\SoccerTournament.DataAccess\obj\Debug\net9.0\SoccerTournament.DataAccess.csproj.CoreCompileInputs.cache
+C:\Users\Silly\.copilot\repos\copilot-worktrees\SoccerTournamentManager\ngwanika-effective-system\SoccerTournament.DataAccess\obj\Debug\net9.0\SoccerTournament.DataAccess.sourcelink.json
+C:\Users\Silly\.copilot\repos\copilot-worktrees\SoccerTournamentManager\ngwanika-effective-system\SoccerTournament.DataAccess\obj\Debug\net9.0\SoccerTo.5C7E332D.Up2Date
+C:\Users\Silly\.copilot\repos\copilot-worktrees\SoccerTournamentManager\ngwanika-effective-system\SoccerTournament.DataAccess\obj\Debug\net9.0\SoccerTournament.DataAccess.dll
+C:\Users\Silly\.copilot\repos\copilot-worktrees\SoccerTournamentManager\ngwanika-effective-system\SoccerTournament.DataAccess\obj\Debug\net9.0\refint\SoccerTournament.DataAccess.dll
+C:\Users\Silly\.copilot\repos\copilot-worktrees\SoccerTournamentManager\ngwanika-effective-system\SoccerTournament.DataAccess\obj\Debug\net9.0\SoccerTournament.DataAccess.pdb
+C:\Users\Silly\.copilot\repos\copilot-worktrees\SoccerTournamentManager\ngwanika-effective-system\SoccerTournament.DataAccess\obj\Debug\net9.0\ref\SoccerTournament.DataAccess.dll

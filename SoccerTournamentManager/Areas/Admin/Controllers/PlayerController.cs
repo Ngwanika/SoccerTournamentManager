@@ -1,17 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Build.Tasks.Deployment.Bootstrapper;
-using Microsoft.IdentityModel.Tokens;
-using SoccerTournament.DataAccess.Data;
-using SoccerTournament.DataAccess.Repository;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SoccerTournament.DataAccess.Repository.IRepository;
 using SoccerTournament.Models;
 using SoccerTournament.Models.ViewModels;
-
+using SoccerTournament.Utility;
 
 
 namespace SoccerTournamentManager.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = SD.Role_Admin)]
     public class PlayerController : Controller
     {        
 
