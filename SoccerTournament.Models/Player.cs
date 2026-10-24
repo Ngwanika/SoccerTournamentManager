@@ -21,6 +21,9 @@ namespace SoccerTournament.Models
         public DateTime? DateOfBirth { get; set; }
         public string? PlayerPhotoUrl { get; set; }
 
+        [EmailAddress]
+        [MaxLength(256)]
+        public string? Email { get; set; }
 
         // FOREIGN KEY
         public int TeamId { get; set; }

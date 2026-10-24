@@ -2,7 +2,7 @@
 
 
 <div class="card shadow border-0 mt-4">
-    <div class="card-header bg-primary  ml-0 py-3">
+    <div class="card-header bg-blue bg-primary ml-0 py-3">
         <div class="row">
             <div class="col-12 text-center">
                 <h2 class="text-white py-2">
@@ -80,6 +80,12 @@
                        class="btn btn-primary">
                         <i class="bi bi-people"></i> Manage Team Members
                     </a>
+                    <a asp-area="TeamManager" asp-controller="Communication" asp-action="Index" class="btn btn-outline-primary">
+                        <i class="bi bi-chat-dots"></i> Team Communication
+                    </a>
+                    <a asp-area="TeamManager" asp-controller="ContactAdmin" asp-action="Index" class="btn btn-outline-secondary">
+                        Contact Tournament Admin
+                    </a>
                     <hr />
 
                     <a asp-area="TeamManager" asp-controller="Team" asp-action="Upsert" asp-route-id="@Model.TeamId" class="btn btn-warning">
@@ -94,6 +100,5 @@
         </div>
     </div>
 </div>
-
 
 

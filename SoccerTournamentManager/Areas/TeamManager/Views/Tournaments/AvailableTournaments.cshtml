@@ -634,7 +634,7 @@
                             else if (item.Status == "Rejected")
                             {
                                 <!-- Re-apply after rejection -->
-                                <form asp-action="ApplyToTournament" asp-controller="Team" method="post">
+                                <form asp-action="ApplyToTournament" asp-controller="Tournaments" method="post">
                                     @Html.AntiForgeryToken()
                                     <input type="hidden" name="teamId" value="@teamId" />
                                     <input type="hidden" name="tournamentId" value="@item.TournamentId" />
@@ -656,15 +656,11 @@
                                     <i class="bi bi-trophy-fill"></i>
                                     You're in! Good luck.
                                 </span>
-                                <!-- First-time apply -->
-                                <form asp-action="Details" asp-controller="Tournaments" method="post">
-                                    @Html.AntiForgeryToken()
-                                    <input type="hidden" name="teamId" value="@teamId" />
-                                    <input type="hidden" name="tournamentId" value="@item.TournamentId" />
-                                    <button type="submit" class="btn-apply">
-                                        <i class="bi bi-send-fill"></i> Details
-                                    </button>
-                                </form>
+                                <a asp-action="Details" asp-controller="Tournaments"
+                                   asp-route-teamId="@teamId" asp-route-tournamentId="@item.TournamentId"
+                                   class="btn-apply text-decoration-none">
+                                    <i class="bi bi-eye-fill"></i> Tournament details
+                                </a>
                             }
                         </div><!-- /card-footer -->
                     </div>

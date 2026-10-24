@@ -34,26 +34,76 @@ namespace SoccerTournament.DataAccess.Data
         public DbSet<TournamentRegistration> TournamentRegistrations { get; set; }
 
         public DbSet<Goal> Goals { get; set; }
+        public DbSet<MatchEvent> MatchEvents { get; set; }
+        public DbSet<MatchAuditLog> MatchAuditLogs { get; set; }
+        public DbSet<TournamentDraw> TournamentDraws { get; set; }
+        public DbSet<TeamContactMessage> TeamContactMessages { get; set; }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
-        //public DbSet<Match> Matches { get; set; }
-        //public DbSet<MatchEvent> MatchEvents { get; set; }
-        //public DbSet<Standing> Standings { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            //modelBuilder.Entity<Match>()
-            //  .HasOne(m => m.HomeTeam)
-            //  .WithMany()
-            //  .HasForeignKey(m => m.HomeTeamId)
-            //  .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<TournamentDraw>()
+                .HasIndex(draw => draw.TournamentId)
+                .IsUnique();
 
-            //modelBuilder.Entity<Match>()
-            //    .HasOne(m => m.AwayTeam)
-            //    .WithMany()
-            //    .HasForeignKey(m => m.AwayTeamId)
-            //    .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<MatchEvent>()
+                .HasIndex(matchEvent => new { matchEvent.MatchId, matchEvent.EventMinute });
+
+            modelBuilder.Entity<MatchAuditLog>()
+                .HasIndex(audit => new { audit.MatchId, audit.CreatedAtUtc });
+
+            modelBuilder.Entity<TeamContactMessage>()
+                .HasIndex(message => message.SentAtUtc);
+
+            modelBuilder.Entity<Match>()
+                .HasOne(match => match.HomeTeam)
+                .WithMany()
+                .HasForeignKey(match => match.HomeTeamId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Match>()
+                .HasOne(match => match.AwayTeam)
+                .WithMany()
+                .HasForeignKey(match => match.AwayTeamId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Match>()
+                .HasOne<ApplicationUser>()
+                .WithMany()
+                .HasForeignKey(match => match.AssignedOfficialUserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Match>()
+                .HasOne<ApplicationUser>()
+                .WithMany()
+                .HasForeignKey(match => match.AssistantOfficialUserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<MatchEvent>()
+                .HasOne(matchEvent => matchEvent.Team)
+                .WithMany()
+                .HasForeignKey(matchEvent => matchEvent.TeamId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<MatchEvent>()
+                .HasOne<ApplicationUser>()
+                .WithMany()
+                .HasForeignKey(matchEvent => matchEvent.RecordedByUserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<MatchAuditLog>()
+                .HasOne(audit => audit.Match)
+                .WithMany()
+                .HasForeignKey(audit => audit.MatchId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<TeamContactMessage>()
+                .HasOne(message => message.Team)
+                .WithMany()
+                .HasForeignKey(message => message.TeamId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Team>().HasData(
                new Team { TeamId = 1, TeamName = "Red Warriors", Abbreviation = "RWS", CoachName = "John Smith", LogoUrl = "https://example.com/logos/red_warriors.png", Homestadium = "Dube", ContactNumber1 = "0811111111", Established = DateTime.Parse("2020-06-09"), Email = "test@email.com" },

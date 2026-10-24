@@ -1,0 +1,113 @@
+@model TournamentBracketViewModel
+
+@{
+    ViewData["Title"] = "Tournament brackets";
+}
+
+<main class="container py-4">
+    <p><a asp-action="ViewMatches" asp-route-id="@Model.TournamentId" class="link-secondary">← Back to schedule</a></p>
+    <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+        <div>
+            <h1 class="h3">@Model.TournamentName</h1>
+            <p class="text-secondary mb-0">@Model.Format · @Model.Teams.Count teams</p>
+        </div>
+        <a asp-area="Customer" asp-controller="Home" asp-action="ViewMatches"
+           asp-route-id="@Model.TournamentId" class="btn btn-outline-primary">View schedule</a>
+    </div>
+
+    @if (!Model.HasDraw)
+    {
+        <div class="alert alert-info" role="status">
+            The tournament draw has not been finalized yet. Fixtures and standings will appear here once the organizer creates the draw.
+        </div>
+    }
+    else if (Model.Format.Equals("League", StringComparison.OrdinalIgnoreCase)
+        || Model.Format.Equals("Round Robin", StringComparison.OrdinalIgnoreCase))
+    {
+        <section>
+            <h2 class="h4">League standings</h2>
+            <div class="table-responsive">
+                <table class="table table-dark table-striped align-middle">
+                    <thead><tr><th>Pos</th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>Pts</th></tr></thead>
+                    <tbody>
+                        @foreach (var row in Model.Standings)
+                        {
+                            <tr>
+                                <th scope="row">@row.Position</th><td>@row.TeamName</td><td>@row.Played</td>
+                                <td>@row.Won</td><td>@row.Drawn</td><td>@row.Lost</td>
+                                <td>@row.GoalsFor</td><td>@row.GoalsAgainst</td><td class="fw-bold">@row.Points</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    }
+    else if (Model.Format.Equals("Group Stage", StringComparison.OrdinalIgnoreCase))
+    {
+        <div class="row g-4">
+            @foreach (var group in Model.Groups)
+            {
+                <section class="col-md-6">
+                    <h2 class="h5">@group.Name</h2>
+                    <div class="table-responsive">
+                        <table class="table table-dark table-striped table-sm">
+                            <thead><tr><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>Pts</th></tr></thead>
+                            <tbody>
+                                @foreach (var team in group.Standings)
+                                {
+                                    <tr><td>@team.TeamName</td><td>@team.Played</td><td>@team.Won</td><td>@team.Drawn</td><td>@team.Lost</td><td>@team.Points</td></tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    @if (group.Standings.Count == 0)
+                    {
+                        <ol class="list-group list-group-numbered">
+                            @foreach (var team in group.Teams)
+                            {
+                                <li class="list-group-item bg-dark text-light border-secondary">@team.Name</li>
+                            }
+                        </ol>
+                    }
+                </section>
+            }
+        </div>
+    }
+    else
+    {
+        @if (Model.Rounds.Count == 0)
+        {
+            <p class="text-secondary">At least two teams are required to display the bracket.</p>
+        }
+        else
+        {
+            <div class="row g-3">
+                @foreach (var round in Model.Rounds)
+                {
+                    <section class="col-md-6 col-xl-4">
+                        <h2 class="h5">@round.Name</h2>
+                        @foreach (var match in round.Matches)
+                        {
+                            <article class="border border-secondary rounded p-3 mb-3 bg-dark">
+                                @if (match.MatchId.HasValue)
+                                {
+                                    <a asp-action="MatchDetails" asp-route-id="@match.MatchId" class="text-decoration-none text-light">
+                                        <div class="d-flex justify-content-between"><span>@match.HomeTeam</span><span>@(match.HomeScore?.ToString() ?? "–")</span></div>
+                                        <div class="d-flex justify-content-between mt-2"><span>@match.AwayTeam</span><span>@(match.AwayScore?.ToString() ?? "–")</span></div>
+                                    </a>
+                                }
+                                else
+                                {
+                                    <div class="d-flex justify-content-between"><span>@match.HomeTeam</span><span>@(match.HomeScore?.ToString() ?? "–")</span></div>
+                                    <div class="d-flex justify-content-between mt-2"><span>@match.AwayTeam</span><span>@(match.AwayScore?.ToString() ?? "–")</span></div>
+                                }
+                                <small class="d-block text-secondary mt-2">@match.Status</small>
+                            </article>
+                        }
+                    </section>
+                }
+            </div>
+        }
+    }
+</main>

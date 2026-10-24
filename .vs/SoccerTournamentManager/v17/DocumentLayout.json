@@ -1,0 +1,54 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\Silly\\.copilot\\repos\\copilot-worktrees\\SoccerTournamentManager\\ngwanika-effective-system\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{66B5014E-6BF1-43FF-B507-FB206B01E8DC}|SoccerTournamentManager\\SoccerTournamentManager.csproj|c:\\users\\silly\\.copilot\\repos\\copilot-worktrees\\soccertournamentmanager\\ngwanika-effective-system\\soccertournamentmanager\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{66B5014E-6BF1-43FF-B507-FB206B01E8DC}|SoccerTournamentManager\\SoccerTournamentManager.csproj|solutionrelative:soccertournamentmanager\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{66B5014E-6BF1-43FF-B507-FB206B01E8DC}|SoccerTournamentManager\\SoccerTournamentManager.csproj|c:\\users\\silly\\.copilot\\repos\\copilot-worktrees\\soccertournamentmanager\\ngwanika-effective-system\\soccertournamentmanager\\scaffoldingreadme.txt||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{66B5014E-6BF1-43FF-B507-FB206B01E8DC}|SoccerTournamentManager\\SoccerTournamentManager.csproj|solutionrelative:soccertournamentmanager\\scaffoldingreadme.txt||{8B382828-6202-11D1-8870-0000F87579D2}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\Silly\\.copilot\\repos\\copilot-worktrees\\SoccerTournamentManager\\ngwanika-effective-system\\SoccerTournamentManager\\appsettings.json",
+              "RelativeDocumentMoniker": "SoccerTournamentManager\\appsettings.json",
+              "ToolTip": "C:\\Users\\Silly\\.copilot\\repos\\copilot-worktrees\\SoccerTournamentManager\\ngwanika-effective-system\\SoccerTournamentManager\\appsettings.json",
+              "RelativeToolTip": "SoccerTournamentManager\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAuwAkAAABUAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-10-24T19:14:16.204Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "ScaffoldingReadMe.txt",
+              "DocumentMoniker": "C:\\Users\\Silly\\.copilot\\repos\\copilot-worktrees\\SoccerTournamentManager\\ngwanika-effective-system\\SoccerTournamentManager\\ScaffoldingReadMe.txt",
+              "RelativeDocumentMoniker": "SoccerTournamentManager\\ScaffoldingReadMe.txt",
+              "ToolTip": "C:\\Users\\Silly\\.copilot\\repos\\copilot-worktrees\\SoccerTournamentManager\\ngwanika-effective-system\\SoccerTournamentManager\\ScaffoldingReadMe.txt",
+              "RelativeToolTip": "SoccerTournamentManager\\ScaffoldingReadMe.txt",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
+              "WhenOpened": "2026-10-24T19:17:52.269Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

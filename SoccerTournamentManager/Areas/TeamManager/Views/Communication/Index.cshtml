@@ -1,0 +1,76 @@
+@model TeamCommunicationViewModel
+
+@{
+    ViewData["Title"] = "Team communication";
+}
+
+<main class="container py-4">
+    <h1 class="h3">Team communication</h1>
+    <p class="text-secondary">Contact individual roster members or email everyone with an address on file.</p>
+
+    <section class="mb-5">
+        <h2 class="h5">Email team members</h2>
+        @if (!Model.Members.Any(member => !string.IsNullOrWhiteSpace(member.Email)))
+        {
+            <div class="alert alert-info" role="status">
+                No roster email addresses are available yet. Add an email address from the roster editor first.
+            </div>
+        }
+        <form asp-action="EmailMembers" method="post" class="row g-3">
+            @Html.AntiForgeryToken()
+            <div class="col-md-5">
+                <label for="recipient" class="form-label">Recipient</label>
+                <select id="recipient" name="PlayerId" class="form-select">
+                    <option value="">Choose one team member</option>
+                    @foreach (var member in Model.Members.Where(member => !string.IsNullOrWhiteSpace(member.Email)))
+                    {
+                        <option value="@member.PlayerId">@member.Name — @member.Email</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-7 d-flex align-items-end">
+                <div class="form-check mb-2">
+                    <input id="send-to-all" name="SendToAll" value="true" class="form-check-input" type="checkbox" />
+                    <label for="send-to-all" class="form-check-label">Email all members with an address on file</label>
+                </div>
+            </div>
+            <div class="col-12">
+                <label for="subject" class="form-label">Subject</label>
+                <input id="subject" name="Subject" maxlength="160" required class="form-control" />
+            </div>
+            <div class="col-12">
+                <label for="message" class="form-label">Message</label>
+                <textarea id="message" name="Message" rows="5" maxlength="5000" required class="form-control"></textarea>
+            </div>
+            <div class="col-12"><button type="submit" class="btn btn-primary">Send email</button></div>
+        </form>
+    </section>
+
+    <section class="mb-5">
+        <h2 class="h5">WhatsApp team group</h2>
+        @if (!string.IsNullOrWhiteSpace(Model.WhatsAppGroupLink))
+        {
+            <p>Current invite: <a href="@Model.WhatsAppGroupLink" target="_blank" rel="noopener noreferrer">Open WhatsApp group</a></p>
+        }
+        else
+        {
+            <p class="text-secondary">No WhatsApp invite link has been saved.</p>
+        }
+        <form asp-action="SaveWhatsAppLink" method="post" class="row g-2">
+            @Html.AntiForgeryToken()
+            <div class="col-md-9">
+                <label for="whats-app-link" class="form-label">WhatsApp invite link</label>
+                <input id="whats-app-link" name="whatsAppGroupLink" type="url" value="@Model.WhatsAppGroupLink"
+                       placeholder="https://chat.whatsapp.com/..." class="form-control" />
+                <span asp-validation-for="WhatsAppGroupLink" class="text-danger"></span>
+            </div>
+            <div class="col-md-3 d-flex align-items-end">
+                <button type="submit" class="btn btn-outline-primary">Save link</button>
+            </div>
+        </form>
+    </section>
+
+    <a asp-area="TeamManager" asp-controller="ContactAdmin" asp-action="Index" class="btn btn-outline-secondary">
+        Contact tournament administrators
+    </a>
+</main>

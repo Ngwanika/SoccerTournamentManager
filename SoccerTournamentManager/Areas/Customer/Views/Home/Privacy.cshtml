@@ -1,6 +1,562 @@
-﻿@{
-    ViewData["Title"] = "Privacy Policy";
-}
-<h1>@ViewData["Title"]</h1>
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PitchPerfect | Master the Beautiful Game</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
 
-<p>Use this page to detail your site's privacy policy.</p>
+        .hero-gradient {
+            background: linear-gradient(to bottom, rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 1)), url('https://images.unsplash.com/photo-1574629810360-7efbbe195018?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+    </style>
+</head>
+
+<div class="bg-slate-900 text-white min-h-screen">
+    <body class="bg-slate-900 text-white font-sans min-h-screen">
+
+
+
+        <!-- Hero -->
+        <header class="hero-gradient relative overflow-hidden">
+            <div class="max-w-5xl mx-auto px-6 py-24 text-center">
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass text-emerald-300 text-sm mb-6">
+                    <i class="fas fa-shield-alt"></i>
+                    Your privacy matters
+                </div>
+
+                <h1 class="text-4xl md:text-6xl font-extrabold mb-6">
+                    Privacy <span class="text-emerald-400">Policy</span>
+                </h1>
+                <a asp-area="Identity"
+                   asp-page="/Account/Register"
+                   class="inline-flex items-center justify-center gap-2
+          mt-6 mb-6 px-6 py-3
+          rounded-xl bg-emerald-500
+          text-white font-bold text-base
+          shadow-lg shadow-emerald-500/25
+          transition-all duration-300
+          hover:bg-emerald-400 hover:shadow-emerald-400/40
+          hover:-translate-y-0.5
+          focus:outline-none focus:ring-2
+          focus:ring-emerald-300 focus:ring-offset-2
+          focus:ring-offset-slate-900">
+                    <i class="fas fa-user-plus"></i>
+                    Create an account
+                    <i class="fas fa-arrow-right text-sm"></i>
+                </a>
+                <p class="text-slate-300 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed">
+                    We are committed to protecting your personal information
+                    while helping teams, players and tournament organisers
+                    enjoy a better football experience.
+                </p>
+
+                <p class="text-slate-400 text-sm mt-6">
+                    Last updated: 16 October 2026
+                </p>
+            </div>
+        </header>
+
+        <!-- Privacy Content -->
+        <main class="max-w-7xl mx-auto px-6 py-16">
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-10">
+
+                <!-- Table of Contents -->
+                <aside class="lg:col-span-1">
+                    <div class="glass rounded-2xl p-6 lg:sticky lg:top-28">
+                        <h2 class="font-bold text-lg mb-5">On this page</h2>
+
+                        <nav class="space-y-4 text-sm text-slate-300">
+                            <a href="#introduction" class="block hover:text-emerald-400">01. Introduction</a>
+                            <a href="#information" class="block hover:text-emerald-400">02. Information we collect</a>
+                            <a href="#usage" class="block hover:text-emerald-400">03. How we use information</a>
+                            <a href="#sharing" class="block hover:text-emerald-400">04. Information sharing</a>
+                            <a href="#public-data" class="block hover:text-emerald-400">05. Public information</a>
+                            <a href="#security" class="block hover:text-emerald-400">06. Data security</a>
+                            <a href="#retention" class="block hover:text-emerald-400">07. Data retention</a>
+                            <a href="#rights" class="block hover:text-emerald-400">08. Your rights</a>
+                            <a href="#children" class="block hover:text-emerald-400">09. Children's information</a>
+                            <a href="#cookies" class="block hover:text-emerald-400">10. Cookies</a>
+                            <a href="#changes" class="block hover:text-emerald-400">11. Policy changes</a>
+                            <a href="#contact" class="block hover:text-emerald-400">12. Contact us</a>
+                        </nav>
+                    </div>
+                </aside>
+
+                <!-- Policy Sections -->
+                <div class="lg:col-span-3 space-y-8">
+
+                    <!-- Introduction -->
+                    <section id="introduction" class="glass rounded-2xl p-7 md:p-9 scroll-mt-28">
+                        <div class="flex items-center gap-4 mb-5">
+                            <div class="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xl">
+                                <i class="fas fa-handshake"></i>
+                            </div>
+                            <h2 class="text-2xl font-bold">01. Introduction</h2>
+                        </div>
+
+                        <p class="text-slate-300 leading-7">
+                            Welcome to PitchPerfect. This Privacy Policy explains how
+                            PitchPerfect collects, uses, stores and protects personal
+                            information when you access our website or use our football
+                            tournament management services.
+                        </p>
+
+                        <p class="text-slate-300 leading-7 mt-4">
+                            This policy applies to team representatives, coaches, players,
+                            tournament organisers, administrators and other users of
+                            the platform.
+                        </p>
+
+                        <p class="text-slate-300 leading-7 mt-4">
+                            We aim to handle personal information responsibly and in
+                            accordance with applicable privacy laws, including the
+                            Protection of Personal Information Act (POPIA) in South Africa,
+                            where applicable.
+                        </p>
+                    </section>
+
+                    <!-- Information Collected -->
+                    <section id="information" class="glass rounded-2xl p-7 md:p-9 scroll-mt-28">
+                        <div class="flex items-center gap-4 mb-5">
+                            <div class="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xl">
+                                <i class="fas fa-database"></i>
+                            </div>
+                            <h2 class="text-2xl font-bold">02. Information we collect</h2>
+                        </div>
+
+                        <p class="text-slate-300 leading-7 mb-5">
+                            Depending on how you use PitchPerfect, we may collect the
+                            following categories of information:
+                        </p>
+
+                        <div class="space-y-5">
+                            <div class="border-l-2 border-emerald-400 pl-5">
+                                <h3 class="font-semibold text-white mb-2">Account information</h3>
+                                <p class="text-slate-400 leading-7">
+                                    Information such as your name, email address,
+                                    login details and account preferences when you
+                                    register or manage an account.
+                                </p>
+                            </div>
+
+                            <div class="border-l-2 border-emerald-400 pl-5">
+                                <h3 class="font-semibold text-white mb-2">Team information</h3>
+                                <p class="text-slate-400 leading-7">
+                                    Team names, abbreviations, logos, coach details,
+                                    contact numbers, home stadiums and establishment dates
+                                    supplied by team representatives.
+                                </p>
+                            </div>
+
+                            <div class="border-l-2 border-emerald-400 pl-5">
+                                <h3 class="font-semibold text-white mb-2">Player information</h3>
+                                <p class="text-slate-400 leading-7">
+                                    Player names, positions, jersey numbers, dates of birth
+                                    and photographs where these features are used.
+                                </p>
+                            </div>
+
+                            <div class="border-l-2 border-emerald-400 pl-5">
+                                <h3 class="font-semibold text-white mb-2">Tournament information</h3>
+                                <p class="text-slate-400 leading-7">
+                                    Tournament applications, registration status, match
+                                    fixtures, scores, goals, results and related participation
+                                    records.
+                                </p>
+                            </div>
+
+                            <div class="border-l-2 border-emerald-400 pl-5">
+                                <h3 class="font-semibold text-white mb-2">Technical information</h3>
+                                <p class="text-slate-400 leading-7">
+                                    Depending on the platform configuration, we may process
+                                    technical logs, browser information, IP addresses and
+                                    diagnostic information needed to maintain the service
+                                    and investigate errors or security incidents.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 bg-amber-400/10 border border-amber-400/20 rounded-xl p-5">
+                            <p class="text-amber-200 text-sm leading-6">
+                                <i class="fas fa-info-circle mr-2"></i>
+                                Please only submit information you are authorised to provide.
+                                Team representatives should ensure they have the appropriate
+                                authority to submit player information and photographs.
+                            </p>
+                        </div>
+                    </section>
+
+                    <!-- Use of Information -->
+                    <section id="usage" class="glass rounded-2xl p-7 md:p-9 scroll-mt-28">
+                        <div class="flex items-center gap-4 mb-5">
+                            <div class="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xl">
+                                <i class="fas fa-cogs"></i>
+                            </div>
+                            <h2 class="text-2xl font-bold">03. How we use information</h2>
+                        </div>
+
+                        <p class="text-slate-300 leading-7 mb-4">
+                            We use personal information only for appropriate purposes,
+                            which may include:
+                        </p>
+
+                        <ul class="space-y-3 text-slate-300">
+                            <li class="flex gap-3">
+                                <i class="fas fa-check-circle text-emerald-400 mt-1"></i>
+                                Creating and managing user accounts and team profiles.
+                            </li>
+                            <li class="flex gap-3">
+                                <i class="fas fa-check-circle text-emerald-400 mt-1"></i>
+                                Processing tournament applications and approval decisions.
+                            </li>
+                            <li class="flex gap-3">
+                                <i class="fas fa-check-circle text-emerald-400 mt-1"></i>
+                                Organising fixtures, recording match results and displaying standings.
+                            </li>
+                            <li class="flex gap-3">
+                                <i class="fas fa-check-circle text-emerald-400 mt-1"></i>
+                                Communicating important tournament updates and account notices.
+                            </li>
+                            <li class="flex gap-3">
+                                <i class="fas fa-check-circle text-emerald-400 mt-1"></i>
+                                Maintaining platform reliability, preventing misuse and
+                                troubleshooting technical problems.
+                            </li>
+                            <li class="flex gap-3">
+                                <i class="fas fa-check-circle text-emerald-400 mt-1"></i>
+                                Meeting applicable legal obligations and responding to
+                                legitimate requests.
+                            </li>
+                        </ul>
+
+                        <p class="text-slate-400 leading-7 mt-5">
+                            We will not use personal information for an unrelated purpose
+                            without an appropriate legal basis.
+                        </p>
+                    </section>
+
+                    <!-- Sharing -->
+                    <section id="sharing" class="glass rounded-2xl p-7 md:p-9 scroll-mt-28">
+                        <div class="flex items-center gap-4 mb-5">
+                            <div class="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xl">
+                                <i class="fas fa-share-alt"></i>
+                            </div>
+                            <h2 class="text-2xl font-bold">04. Information sharing</h2>
+                        </div>
+
+                        <p class="text-slate-300 leading-7">
+                            We do not sell personal information. Information may be
+                            shared where necessary and appropriate with:
+                        </p>
+
+                        <ul class="list-disc list-inside space-y-3 text-slate-300 mt-4 marker:text-emerald-400">
+                            <li>Authorised tournament administrators reviewing applications and managing competitions.</li>
+                            <li>Teams and tournament participants where information is needed to organise matches or display results.</li>
+                            <li>Service providers supporting hosting, storage, security or technical operations, where applicable.</li>
+                            <li>Authorities or other parties when required by law or necessary to protect legal rights and safety.</li>
+                        </ul>
+
+                        <p class="text-slate-300 leading-7 mt-5">
+                            Access should be limited to information necessary for the
+                            relevant purpose. Where service providers process information
+                            on our behalf, appropriate safeguards should be used.
+                        </p>
+                    </section>
+
+                    <!-- Public Information -->
+                    <section id="public-data" class="glass rounded-2xl p-7 md:p-9 scroll-mt-28">
+                        <div class="flex items-center gap-4 mb-5">
+                            <div class="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xl">
+                                <i class="fas fa-globe"></i>
+                            </div>
+                            <h2 class="text-2xl font-bold">05. Public tournament information</h2>
+                        </div>
+
+                        <p class="text-slate-300 leading-7">
+                            PitchPerfect may display tournament information such as
+                            team names, team logos, fixtures, scores, standings and
+                            player statistics to support the competition.
+                        </p>
+
+                        <p class="text-slate-300 leading-7 mt-4">
+                            Information entered into public-facing profiles or published
+                            tournament pages may be visible to visitors. Account credentials,
+                            private contact information and administrative notes should
+                            not be displayed publicly unless specifically authorised
+                            and legally appropriate.
+                        </p>
+
+                        <p class="text-slate-300 leading-7 mt-4">
+                            Please consider what information you submit. If you believe
+                            information has been published incorrectly or without proper
+                            authorisation, contact the platform administrator.
+                        </p>
+                    </section>
+
+                    <!-- Security -->
+                    <section id="security" class="glass rounded-2xl p-7 md:p-9 scroll-mt-28">
+                        <div class="flex items-center gap-4 mb-5">
+                            <div class="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xl">
+                                <i class="fas fa-lock"></i>
+                            </div>
+                            <h2 class="text-2xl font-bold">06. Data security</h2>
+                        </div>
+
+                        <p class="text-slate-300 leading-7">
+                            We aim to protect information against unauthorised access,
+                            loss, misuse, alteration and disclosure through appropriate
+                            technical and organisational safeguards.
+                        </p>
+
+                        <p class="text-slate-300 leading-7 mt-4">
+                            Depending on the deployed system, safeguards may include
+                            access controls, authentication, restricted administrative
+                            permissions, secure connections, backups and monitoring.
+                        </p>
+
+                        <p class="text-slate-300 leading-7 mt-4">
+                            No online service can guarantee absolute security. Users
+                            should keep their passwords confidential and report
+                            suspected account compromise promptly.
+                        </p>
+                    </section>
+
+                    <!-- Retention -->
+                    <section id="retention" class="glass rounded-2xl p-7 md:p-9 scroll-mt-28">
+                        <div class="flex items-center gap-4 mb-5">
+                            <div class="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xl">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <h2 class="text-2xl font-bold">07. Data retention</h2>
+                        </div>
+
+                        <p class="text-slate-300 leading-7">
+                            We retain personal information only for as long as reasonably
+                            necessary to fulfil the purpose for which it was collected,
+                            operate the platform, resolve disputes and comply with
+                            applicable legal requirements.
+                        </p>
+
+                        <p class="text-slate-300 leading-7 mt-4">
+                            Some tournament records may need to be retained after a
+                            competition ends for historical records, reporting or
+                            legitimate administrative purposes. Where appropriate,
+                            information may be deleted, anonymised or securely disposed of.
+                        </p>
+                    </section>
+
+                    <!-- Rights -->
+                    <section id="rights" class="glass rounded-2xl p-7 md:p-9 scroll-mt-28">
+                        <div class="flex items-center gap-4 mb-5">
+                            <div class="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xl">
+                                <i class="fas fa-user-shield"></i>
+                            </div>
+                            <h2 class="text-2xl font-bold">08. Your privacy rights</h2>
+                        </div>
+
+                        <p class="text-slate-300 leading-7">
+                            Subject to applicable law, you may have the right to:
+                        </p>
+
+                        <ul class="space-y-3 text-slate-300 mt-4">
+                            <li class="flex gap-3">
+                                <i class="fas fa-check text-emerald-400 mt-1"></i>
+                                Request access to personal information held about you.
+                            </li>
+                            <li class="flex gap-3">
+                                <i class="fas fa-check text-emerald-400 mt-1"></i>
+                                Request correction of inaccurate or incomplete information.
+                            </li>
+                            <li class="flex gap-3">
+                                <i class="fas fa-check text-emerald-400 mt-1"></i>
+                                Request deletion or restriction where legally applicable.
+                            </li>
+                            <li class="flex gap-3">
+                                <i class="fas fa-check text-emerald-400 mt-1"></i>
+                                Object to certain processing or withdraw consent where
+                                consent is the applicable legal basis.
+                            </li>
+                            <li class="flex gap-3">
+                                <i class="fas fa-check text-emerald-400 mt-1"></i>
+                                Raise a concern about how your information is handled.
+                            </li>
+                        </ul>
+
+                        <p class="text-slate-300 leading-7 mt-5">
+                            To exercise a right, contact the platform administrator using
+                            the contact details provided below. We may need to verify
+                            your identity before responding. Certain records may need
+                            to be retained where the law permits or requires it.
+                        </p>
+                    </section>
+
+                    <!-- Children -->
+                    <section id="children" class="glass rounded-2xl p-7 md:p-9 scroll-mt-28">
+                        <div class="flex items-center gap-4 mb-5">
+                            <div class="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xl">
+                                <i class="fas fa-child"></i>
+                            </div>
+                            <h2 class="text-2xl font-bold">09. Children's information</h2>
+                        </div>
+
+                        <p class="text-slate-300 leading-7">
+                            Football teams may include players under the age of 18.
+                            Where children's personal information is collected, it must
+                            be handled with appropriate care and in accordance with
+                            applicable legal requirements.
+                        </p>
+
+                        <p class="text-slate-300 leading-7 mt-4">
+                            Team representatives and organisers should ensure that
+                            they have the necessary authority and permissions before
+                            submitting children's details or photographs. Additional
+                            safeguards may be required for information about children.
+                        </p>
+                    </section>
+
+                    <!-- Cookies -->
+                    <section id="cookies" class="glass rounded-2xl p-7 md:p-9 scroll-mt-28">
+                        <div class="flex items-center gap-4 mb-5">
+                            <div class="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xl">
+                                <i class="fas fa-cookie-bite"></i>
+                            </div>
+                            <h2 class="text-2xl font-bold">10. Cookies and similar technologies</h2>
+                        </div>
+
+                        <p class="text-slate-300 leading-7">
+                            PitchPerfect may use cookies or similar technologies to
+                            support essential website functionality, maintain sessions,
+                            improve security and remember relevant preferences.
+                        </p>
+
+                        <p class="text-slate-300 leading-7 mt-4">
+                            The cookies used depend on the features enabled in the
+                            deployed application. If analytics or advertising technologies
+                            are introduced, this policy should be updated to explain
+                            their use and any applicable choices available to users.
+                        </p>
+                    </section>
+
+                    <!-- Changes -->
+                    <section id="changes" class="glass rounded-2xl p-7 md:p-9 scroll-mt-28">
+                        <div class="flex items-center gap-4 mb-5">
+                            <div class="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xl">
+                                <i class="fas fa-file-alt"></i>
+                            </div>
+                            <h2 class="text-2xl font-bold">11. Changes to this policy</h2>
+                        </div>
+
+                        <p class="text-slate-300 leading-7">
+                            We may update this Privacy Policy when our services, data
+                            practices or legal obligations change. The latest version
+                            will be published on this page with an updated revision date.
+                        </p>
+
+                        <p class="text-slate-300 leading-7 mt-4">
+                            Where required, we will provide additional notice of material
+                            changes.
+                        </p>
+                    </section>
+
+                    <!-- Contact -->
+                    <section id="contact" class="rounded-2xl p-7 md:p-9 bg-emerald-500/10 border border-emerald-400/20 scroll-mt-28">
+                        <div class="flex items-center gap-4 mb-5">
+                            <div class="w-12 h-12 rounded-xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center text-xl">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <h2 class="text-2xl font-bold">12. Contact us</h2>
+                        </div>
+
+                        <p class="text-slate-300 leading-7 mb-6">
+                            If you have questions about this policy, want to access
+                            or correct your personal information, or wish to raise
+                            a privacy concern, please contact the PitchPerfect
+                            platform administrator.
+                        </p>
+
+                        <!-- Replace these placeholders before publishing -->
+                        <div class="space-y-4">
+                            <div class="flex items-start gap-3">
+                                <i class="fas fa-envelope text-emerald-400 mt-1"></i>
+                                <div>
+                                    <p class="font-semibold">Email</p>
+                                    <p class="text-slate-400 text-sm">
+                                        Replace with your official support email address.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start gap-3">
+                                <i class="fas fa-map-marker-alt text-emerald-400 mt-1"></i>
+                                <div>
+                                    <p class="font-semibold">Location</p>
+                                    <p class="text-slate-400 text-sm">
+                                        South Africa, if applicable to your organisation.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Disclaimer -->
+                    <div class="border border-white/10 rounded-xl p-5 text-sm text-slate-400 leading-6">
+                        <i class="fas fa-info-circle text-emerald-400 mr-2"></i>
+                        <strong class="text-slate-300">Important:</strong>
+                        This is a starting template, not a legal review. Before publishing,
+                        confirm that it accurately describes your actual data collection,
+                        hosting, security, cookies and sharing practices. Obtain appropriate
+                        legal advice for your circumstances, particularly if registering
+                        children or processing information covered by POPIA.
+                    </div>
+
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="border-t border-white/10 bg-slate-950">
+            <div class="max-w-7xl mx-auto px-6 py-8">
+                <div class="flex flex-col md:flex-row justify-between items-center gap-5">
+                    <a href="/" class="text-xl font-bold">
+                        <i class="fas fa-futbol text-emerald-400 mr-2"></i>
+                        Pitch<span class="text-emerald-400">Perfect</span>
+                    </a>
+
+                    <p class="text-sm text-slate-500 text-center">
+                        Built for the love of the game.
+                    </p>
+
+                    <div class="flex gap-5 text-sm text-slate-400">
+                        <a href="/" class="hover:text-emerald-400 transition">Home</a>
+                        <a href="/Home/Privacy" class="hover:text-emerald-400 transition">Privacy</a>
+                    </div>
+                </div>
+
+                <div class="text-center text-xs text-slate-600 mt-6">
+                    &copy; <span id="currentYear">2026</span> PitchPerfect. All rights reserved.
+                </div>
+            </div>
+        </footer>
+
+        <script>
+            document.getElementById("currentYear").textContent =
+                new Date().getFullYear();
+        </script>
+
+    </body>
+</div>
+
+
+
+</html>

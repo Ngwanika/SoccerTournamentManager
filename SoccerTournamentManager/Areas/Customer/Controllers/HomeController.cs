@@ -1,8 +1,11 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using SoccerTournament.DataAccess.Data;
 using SoccerTournament.DataAccess.Repository.IRepository;
 using SoccerTournament.Models;
 using SoccerTournament.Models.ViewModels;
+using SoccerTournamentManager.Services;
 
 
 namespace SoccerTournamentManager.Areas.Customer.Controllers
@@ -11,9 +14,17 @@ namespace SoccerTournamentManager.Areas.Customer.Controllers
     public class HomeController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
-        public HomeController(IUnitOfWork unitOfWork)
+        private readonly ApplicationDbContext _dbContext;
+        private readonly TournamentBracketService _bracketService;
+
+        public HomeController(
+            IUnitOfWork unitOfWork,
+            ApplicationDbContext dbContext,
+            TournamentBracketService bracketService)
         {
             _unitOfWork = unitOfWork;
+            _dbContext = dbContext;
+            _bracketService = bracketService;
         }
 
         public IActionResult Index()
@@ -113,7 +124,7 @@ namespace SoccerTournamentManager.Areas.Customer.Controllers
                     "Group Stage", "Round of 16", "Quarter-Final", "Semi-Final", "Final"
                 };
 
-            // Build detail objects — all CSS decisions made here
+            // Build detail objects ï¿½ all CSS decisions made here
             var details = matches.Select(m =>
             {
                 string statusBadge = m.Status == "Live" ? "abadge-live"
@@ -182,7 +193,6 @@ namespace SoccerTournamentManager.Areas.Customer.Controllers
 
         public IActionResult ViewMatches(int id)
         {
-            id = 2;
             var tournament = _unitOfWork.Tournament.Get(t => t.TournamentId == id);
             if (tournament == null) return NotFound();
 
@@ -234,8 +244,7 @@ namespace SoccerTournamentManager.Areas.Customer.Controllers
                     CardAccentClass = cardAccent,
                     Goals = goals
                 };
-            }).Where(m => m.Status != "Completed")  // Only upcoming/live
-             .OrderBy(m => m.MatchDate.Date)
+            }).OrderBy(m => m.MatchDate.Date)
              .ThenBy(m => m.MatchDate.TimeOfDay)
              .ToList();
 
@@ -260,6 +269,115 @@ namespace SoccerTournamentManager.Areas.Customer.Controllers
             };
 
             return View(vm);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> MatchDetails(int id, CancellationToken cancellationToken)
+        {
+            var match = await _dbContext.Matches
+                .AsNoTracking()
+                .Include(item => item.HomeTeam)
+                .Include(item => item.AwayTeam)
+                .Include(item => item.Events)
+                    .ThenInclude(item => item.Player)
+                .SingleOrDefaultAsync(item => item.MatchId == id, cancellationToken);
+            if (match == null)
+                return NotFound();
+
+            var tournament = await _dbContext.Tournaments
+                .AsNoTracking()
+                .SingleOrDefaultAsync(item => item.TournamentId == match.TournamentId, cancellationToken);
+            if (tournament == null)
+                return NotFound();
+
+            var events = match.Events.OrderBy(item => item.EventMinute).ThenBy(item => item.RecordedAtUtc).ToList();
+            var tracked = events.Count > 0;
+            var meetings = await _dbContext.Matches
+                .AsNoTracking()
+                .Where(item => item.MatchId != match.MatchId
+                    && item.Status == "Completed"
+                    && ((item.HomeTeamId == match.HomeTeamId && item.AwayTeamId == match.AwayTeamId)
+                        || (item.HomeTeamId == match.AwayTeamId && item.AwayTeamId == match.HomeTeamId)))
+                .Select(item => new { item.HomeTeamId, item.HomeScore, item.AwayScore })
+                .ToListAsync(cancellationToken);
+
+            var officialIds = new[] { match.AssignedOfficialUserId, match.AssistantOfficialUserId }
+                .Where(id => !string.IsNullOrWhiteSpace(id))
+                .Distinct()
+                .ToArray();
+            var officials = await _dbContext.Users
+                .AsNoTracking()
+                .Where(user => officialIds.Contains(user.Id))
+                .ToDictionaryAsync(user => user.Id, user => user.Name, cancellationToken);
+
+            var players = await _dbContext.Players
+                .AsNoTracking()
+                .Where(player => player.TeamId == match.HomeTeamId || player.TeamId == match.AwayTeamId)
+                .OrderBy(player => player.JerseyNumber)
+                .Select(player => new MatchPlayerViewModel
+                {
+                    PlayerId = player.PlayerId,
+                    TeamId = player.TeamId,
+                    Name = player.FirstName + " " + player.LastName,
+                    JerseyNumber = player.JerseyNumber,
+                    Position = player.Position
+                })
+                .ToListAsync(cancellationToken);
+
+            var model = new MatchDetailsViewModel
+            {
+                MatchId = match.MatchId,
+                TournamentId = match.TournamentId,
+                TournamentName = tournament.Name,
+                Status = match.Status ?? "Scheduled",
+                Stage = match.Stage,
+                MatchDate = match.MatchDate,
+                HomeTeamId = match.HomeTeamId,
+                HomeTeamName = match.HomeTeam?.TeamName ?? "Home team",
+                AwayTeamId = match.AwayTeamId,
+                AwayTeamName = match.AwayTeam?.TeamName ?? "Away team",
+                HomeScore = match.HomeScore,
+                AwayScore = match.AwayScore,
+                LeadOfficialName = match.AssignedOfficialUserId != null
+                    ? officials.GetValueOrDefault(match.AssignedOfficialUserId)
+                    : null,
+                AssistantOfficialName = match.AssistantOfficialUserId != null
+                    ? officials.GetValueOrDefault(match.AssistantOfficialUserId)
+                    : null,
+                HasTrackedEvents = tracked,
+                HomeCorners = tracked ? events.Count(item => item.TeamId == match.HomeTeamId && item.EventType == "Corner") : null,
+                AwayCorners = tracked ? events.Count(item => item.TeamId == match.AwayTeamId && item.EventType == "Corner") : null,
+                HomeOffsides = tracked ? events.Count(item => item.TeamId == match.HomeTeamId && item.EventType == "Offside") : null,
+                AwayOffsides = tracked ? events.Count(item => item.TeamId == match.AwayTeamId && item.EventType == "Offside") : null,
+                HomePenalties = tracked ? events.Count(item => item.TeamId == match.HomeTeamId && item.EventType == "Penalty") : null,
+                AwayPenalties = tracked ? events.Count(item => item.TeamId == match.AwayTeamId && item.EventType == "Penalty") : null,
+                PreviousMeetings = meetings.Count,
+                HomeWins = meetings.Count(item => item.HomeScore.HasValue && item.AwayScore.HasValue
+                    && (item.HomeTeamId == match.HomeTeamId ? item.HomeScore > item.AwayScore : item.AwayScore > item.HomeScore)),
+                AwayWins = meetings.Count(item => item.HomeScore.HasValue && item.AwayScore.HasValue
+                    && (item.HomeTeamId == match.HomeTeamId ? item.AwayScore > item.HomeScore : item.HomeScore > item.AwayScore)),
+                Draws = meetings.Count(item => item.HomeScore.HasValue && item.HomeScore == item.AwayScore),
+                HomePlayers = players.Where(player => player.TeamId == match.HomeTeamId).ToList(),
+                AwayPlayers = players.Where(player => player.TeamId == match.AwayTeamId).ToList(),
+                Events = events.Select(item => new MatchEventViewModel
+                {
+                    EventType = item.EventType,
+                    TeamName = item.TeamId == match.HomeTeamId
+                        ? match.HomeTeam?.TeamName ?? "Home team"
+                        : match.AwayTeam?.TeamName ?? "Away team",
+                    PlayerName = item.Player == null ? null : $"{item.Player.FirstName} {item.Player.LastName}",
+                    Minute = item.EventMinute,
+                    Notes = item.Notes
+                }).ToList()
+            };
+            return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Brackets(int id, CancellationToken cancellationToken)
+        {
+            var model = await _bracketService.GetBracketAsync(id, cancellationToken);
+            return model == null ? NotFound() : View(model);
         }
 
 

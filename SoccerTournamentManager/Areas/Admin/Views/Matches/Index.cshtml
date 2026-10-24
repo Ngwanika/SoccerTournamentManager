@@ -4,6 +4,7 @@
     ViewData["Title"] = "Matches";
 
     var teams = ViewBag.Teams as Dictionary<int, string>;
+    var officials = ViewBag.Officials as List<ApplicationUser> ?? new List<ApplicationUser>();
 }
 
 <h2>Matches</h2>
@@ -17,6 +18,8 @@
     Generate Matches
 
 </a>
+<a asp-area="Customer" asp-controller="Home" asp-action="Brackets"
+   asp-route-id="@ViewBag.TournamentId" class="btn btn-outline-secondary ms-2">View bracket</a>
 
 <hr />
 
@@ -29,6 +32,9 @@
             <th>Away Team</th>
             <th>Date</th>
             <th>Status</th>
+            <th>Officials</th>
+            <th>Result</th>
+            <th>Details</th>
 
         </tr>
     </thead>
@@ -40,13 +46,13 @@
             <tr>
 
                 <td>
-                    @(teams.ContainsKey(match.HomeTeamId)
+                    @(teams != null && teams.ContainsKey(match.HomeTeamId)
                         ? teams[match.HomeTeamId]
                         : "Unknown")
                 </td>
 
                 <td>
-                    @(teams.ContainsKey(match.AwayTeamId)
+                    @(teams != null && teams.ContainsKey(match.AwayTeamId)
                         ? teams[match.AwayTeamId]
                         : "Unknown")
                 </td>
@@ -57,6 +63,62 @@
 
                 <td>
                     @match.Status
+                </td>
+                <td>
+                    <form asp-action="AssignOfficials" method="post" class="d-grid gap-1">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="matchId" value="@match.MatchId" />
+                        <label class="visually-hidden" for="lead-@match.MatchId">Lead official</label>
+                        <select id="lead-@match.MatchId" name="leadOfficialUserId" class="form-select form-select-sm">
+                            <option value="">Lead official</option>
+                            @foreach (var official in officials)
+                            {
+                                <option value="@official.Id" selected="@(official.Id == match.AssignedOfficialUserId)">
+                                    @official.Name
+                                </option>
+                            }
+                        </select>
+                        <label class="visually-hidden" for="assistant-@match.MatchId">Assistant official</label>
+                        <select id="assistant-@match.MatchId" name="assistantOfficialUserId" class="form-select form-select-sm">
+                            <option value="">Assistant official</option>
+                            @foreach (var official in officials)
+                            {
+                                <option value="@official.Id" selected="@(official.Id == match.AssistantOfficialUserId)">
+                                    @official.Name
+                                </option>
+                            }
+                        </select>
+                        <button type="submit" class="btn btn-sm btn-outline-primary">Save officials</button>
+                    </form>
+                </td>
+                <td>
+                    <form asp-action="UpdateScore" method="post" class="d-flex gap-1 align-items-center">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="matchId" value="@match.MatchId" />
+                        <label class="visually-hidden" for="home-score-@match.MatchId">Home score</label>
+                        <input id="home-score-@match.MatchId" name="homeScore" type="number" min="0" max="99"
+                               value="@match.HomeScore" class="form-control form-control-sm" style="max-width:5rem" required />
+                        <span>–</span>
+                        <label class="visually-hidden" for="away-score-@match.MatchId">Away score</label>
+                        <input id="away-score-@match.MatchId" name="awayScore" type="number" min="0" max="99"
+                               value="@match.AwayScore" class="form-control form-control-sm" style="max-width:5rem" required />
+                        @if (match.BracketRound.HasValue)
+                        {
+                            <label class="visually-hidden" for="winner-@match.MatchId">Winner if score is tied</label>
+                            <select id="winner-@match.MatchId" name="winnerTeamId" class="form-select form-select-sm">
+                                <option value="">Winner if tied</option>
+                                <option value="@match.HomeTeamId" selected="@(match.WinnerTeamId == match.HomeTeamId)">Home</option>
+                                <option value="@match.AwayTeamId" selected="@(match.WinnerTeamId == match.AwayTeamId)">Away</option>
+                            </select>
+                        }
+                        <button type="submit" class="btn btn-sm btn-primary">Save</button>
+                    </form>
+                </td>
+                <td>
+                    <a asp-area="MatchOfficials" asp-controller="Matches" asp-action="Manage"
+                       asp-route-id="@match.MatchId" class="btn btn-sm btn-outline-secondary">Official workspace</a>
+                    <a asp-area="Customer" asp-controller="Home" asp-action="MatchDetails"
+                       asp-route-id="@match.MatchId" class="btn btn-sm btn-outline-secondary mt-1">Public details</a>
                 </td>
 
             </tr>

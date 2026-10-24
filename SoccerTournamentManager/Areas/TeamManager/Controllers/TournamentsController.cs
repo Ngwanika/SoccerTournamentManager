@@ -1,63 +1,59 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using SoccerTournament.Models.ViewModels;
-using SoccerTournament.Models;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using SoccerTournament.DataAccess.Repository.IRepository;
+using SoccerTournament.Models;
+using SoccerTournament.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using SoccerTournament.Utility;
-using Microsoft.AspNetCore.Routing;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using System;
 
 namespace SoccerTournamentManager.Areas.TeamManager.Controllers
 {
 
     [Area("TeamManager")]
-    [Authorize(Roles = SD.Role_TeamMananger)]
+    [Authorize(Roles = SD.Role_TeamManager + "," + SD.Role_TeamManagerLegacy)]
     public class TournamentsController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IWebHostEnvironment _webHostEnvironment;
-        public TournamentsController(IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment)
+        private readonly UserManager<ApplicationUser> _userManager;
+        public TournamentsController(
+            IUnitOfWork unitOfWork,
+            UserManager<ApplicationUser> userManager)
         {
             _unitOfWork = unitOfWork;
-            _webHostEnvironment = webHostEnvironment;
+            _userManager = userManager;
         }
         public IActionResult Index()
         {
             return View();
         }
 
-        public IActionResult AvailableTournaments(int teamId)
+        public async Task<IActionResult> AvailableTournaments(int teamId)
         {
-            // Guard – make sure the team actually exists
-            Team? team = _unitOfWork.Team.Get(u => u.TeamId == teamId);
+            var assignedTeamId = await GetAssignedTeamIdAsync();
+            if (assignedTeamId == null)
+                return NotFound("No team assigned.");
+
+            Team? team = _unitOfWork.Team.Get(u => u.TeamId == assignedTeamId.Value);
             if (team == null)
                 return NotFound();
 
-            // All upcoming tournaments
-            //var tournaments = _unitOfWork.Tournament
-            //    .GetAll(u => u.Status == "Upcoming");
             var tournaments = _unitOfWork.Tournament
-             .GetAll();
+                .GetAll(tournament => tournament.Status == "Upcoming");
 
-            // All registrations that belong to this team (any tournament)
             var registrations = _unitOfWork.TournamentRegistration
-                .GetAll(r => r.TeamId == teamId);
+                .GetAll(registration => registration.TeamId == assignedTeamId.Value);
 
-            // Build the view model
             var viewModel = tournaments.Select(t => new TournamentStatusVM
             {
                 TournamentId = t.TournamentId,
                 TournamentName = t.Name,
                 Deadline = t.DeadlineDate,
-                // null when the team has never applied to this tournament
                 Status = registrations
                                     .FirstOrDefault(r => r.TournamentId == t.TournamentId)
                                     ?.Status
             }).ToList();
 
-            // Pass the team name to the view so the heading is descriptive
-            ViewBag.TeamId = teamId;
+            ViewBag.TeamId = assignedTeamId.Value;
             ViewBag.TeamName = team.TeamName;
 
             return View(viewModel);
@@ -65,17 +61,32 @@ namespace SoccerTournamentManager.Areas.TeamManager.Controllers
 
 
         [HttpPost]
-        public IActionResult ApplyToTournament(int teamId, int tournamentId)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ApplyToTournament(int teamId, int tournamentId)
         {
-            // Check if already applied (avoid duplicates)
+            var assignedTeamId = await GetAssignedTeamIdAsync();
+            if (assignedTeamId == null)
+                return NotFound("No team assigned.");
+
+            var tournament = _unitOfWork.Tournament.Get(
+                item => item.TournamentId == tournamentId && item.Status == "Upcoming");
+            if (tournament == null)
+                return NotFound();
+
+            if (tournament.DeadlineDate < DateTime.Today)
+            {
+                TempData["error"] = "The registration deadline has passed.";
+                return RedirectToAction(nameof(AvailableTournaments), new { teamId = assignedTeamId.Value });
+            }
+
             var existing = _unitOfWork.TournamentRegistration
-                .Get(r => r.TeamId == teamId && r.TournamentId == tournamentId);
+                .Get(r => r.TeamId == assignedTeamId.Value && r.TournamentId == tournamentId);
 
             if (existing == null)
             {
                 _unitOfWork.TournamentRegistration.Add(new TournamentRegistration
                 {
-                    TeamId = teamId,
+                    TeamId = assignedTeamId.Value,
                     TournamentId = tournamentId,
                     Status = "Pending",
                     AppliedDate = DateTime.Now
@@ -85,7 +96,6 @@ namespace SoccerTournamentManager.Areas.TeamManager.Controllers
             }
             else if (existing.Status == "Rejected")
             {
-                // Allow re-apply after rejection
                 existing.Status = "Pending";
                 existing.AppliedDate = DateTime.Now;
                 existing.ReviewedDate = null;
@@ -99,12 +109,16 @@ namespace SoccerTournamentManager.Areas.TeamManager.Controllers
                 TempData["error"] = "You have already applied to this tournament.";
             }
 
-            return RedirectToAction("AvailableTournaments", new { teamId });
+            return RedirectToAction(nameof(AvailableTournaments), new { teamId = assignedTeamId.Value });
         }
 
-        public IActionResult Details(int teamId, int tournamentId)
+        public async Task<IActionResult> Details(int teamId, int tournamentId)
         {
-            if (tournamentId == null || tournamentId == 0)
+            var assignedTeamId = await GetAssignedTeamIdAsync();
+            if (assignedTeamId == null)
+                return NotFound("No team assigned.");
+
+            if (tournamentId <= 0)
             {
                 return NotFound();
             }
@@ -115,33 +129,24 @@ namespace SoccerTournamentManager.Areas.TeamManager.Controllers
             {
                 return NotFound();
             }
-            ViewBag.TeamId = teamId;
+            ViewBag.TeamId = assignedTeamId.Value;
             return View(tournament);
         }
 
-        public IActionResult ViewMatches(int? teamId, int tournamentId)
+        public async Task<IActionResult> ViewMatches(int? teamId, int tournamentId)
         {
+            var assignedTeamId = await GetAssignedTeamIdAsync();
+            if (assignedTeamId == null)
+                return NotFound("No team assigned.");
+
             var tournament = _unitOfWork.Tournament.Get(t => t.TournamentId == tournamentId);
             if (tournament == null) return NotFound();
 
-            // All matches in this tournament, with team and goal data
-            var matches = new List<Match>();
-            if (teamId.HasValue)
-            {
-                 matches = _unitOfWork.Match.GetAll(
-                m => m.TournamentId == tournamentId
-                && (m.HomeTeamId == teamId || m.AwayTeamId == teamId),
+            var matches = _unitOfWork.Match.GetAll(
+                match => match.TournamentId == tournamentId
+                && (match.HomeTeamId == assignedTeamId || match.AwayTeamId == assignedTeamId),
                 includeProperties: "HomeTeam,AwayTeam,Goals"
-
-            ).OrderBy(m => m.MatchDate).ToList();
-            }
-            else
-            {
-                 matches = _unitOfWork.Match.GetAll(
-                m => m.TournamentId == tournamentId,
-                includeProperties: "HomeTeam,AwayTeam,Goals"
-            ).OrderBy(m => m.MatchDate).ToList();
-            }
+            ).OrderBy(match => match.MatchDate).ToList();
                 
 
             // Stage display order
@@ -208,11 +213,8 @@ namespace SoccerTournamentManager.Areas.TeamManager.Controllers
             string teamName = null;
            
 
-            if (teamId.HasValue)
-            {
-                var team = _unitOfWork.Team.Get(t => t.TeamId == teamId.Value);
-                teamName = team?.TeamName;
-            }
+            var team = _unitOfWork.Team.Get(t => t.TeamId == assignedTeamId.Value);
+            teamName = team?.TeamName;
             var vm = new TournamentMatchesVM
             {
                 TournamentId = tournamentId,
@@ -220,34 +222,27 @@ namespace SoccerTournamentManager.Areas.TeamManager.Controllers
                 TournamentStatus = tournament.Status,
                 GroupedMatches = grouped,
                 TeamName = teamName,
-                TeamId = teamId
+                TeamId = assignedTeamId.Value
             };
            
             return View(vm);
         }
 
-        public IActionResult ViewAllMatches(int? teamId, int tournamentId)
+        public async Task<IActionResult> ViewAllMatches(int? teamId, int tournamentId)
         {
+            var assignedTeamId = await GetAssignedTeamIdAsync();
+            if (assignedTeamId == null)
+                return NotFound("No team assigned.");
+
             var tournament = _unitOfWork.Tournament.Get(t => t.TournamentId == tournamentId);
             if (tournament == null) return NotFound();
 
-            // All matches in this tournament, with team and goal data
-            var matches = new List<Match>();
-            if (teamId.HasValue)
-            {
-                matches = _unitOfWork.Match.GetAll(
-               m => m.TournamentId == tournamentId,
-               includeProperties: "HomeTeam,AwayTeam,Goals"
-
-           ).OrderBy(m => m.MatchDate).ToList();
-            }
-            else
-            {
-                matches = _unitOfWork.Match.GetAll(
-               m => m.TournamentId == tournamentId,
-               includeProperties: "HomeTeam,AwayTeam,Goals"
-           ).OrderBy(m => m.MatchDate).ToList();
-            }
+            var matches = _unitOfWork.Match.GetAll(
+                match => match.TournamentId == tournamentId
+                    && (match.HomeTeamId == assignedTeamId || match.AwayTeamId == assignedTeamId),
+                includeProperties: "HomeTeam,AwayTeam,Goals")
+                .OrderBy(match => match.MatchDate)
+                .ToList();
 
 
             // Stage display order
@@ -311,18 +306,21 @@ namespace SoccerTournamentManager.Areas.TeamManager.Controllers
                     Matches = g.ToList()
                 })
                 .ToList();
-            string teamName = null;
-
-
             var vm = new TournamentMatchesVM
             {
                 TournamentId = tournamentId,
                 TournamentName = tournament.Name,
                 TournamentStatus = tournament.Status,
-                GroupedMatches = grouped,                        
+                GroupedMatches = grouped,
+                TeamId = assignedTeamId.Value
             };
-            ViewBag.TeamIdN = teamId;
             return View(vm);
+        }
+
+        private async Task<int?> GetAssignedTeamIdAsync()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            return user?.TeamId is > 0 ? user.TeamId : null;
         }
     }
 }

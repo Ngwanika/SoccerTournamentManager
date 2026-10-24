@@ -327,10 +327,24 @@ namespace SoccerTournament.DataAccess.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MatchId"));
 
+                    b.Property<string>("AssignedOfficialUserId")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("AssistantOfficialUserId")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<int?>("AwayScore")
                         .HasColumnType("int");
 
                     b.Property<int>("AwayTeamId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("BracketPosition")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("BracketRound")
                         .HasColumnType("int");
 
                     b.Property<int?>("HomeScore")
@@ -351,13 +365,109 @@ namespace SoccerTournament.DataAccess.Migrations
                     b.Property<int>("TournamentId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("WinnerTeamId")
+                        .HasColumnType("int");
+
                     b.HasKey("MatchId");
+
+                    b.HasIndex("AssignedOfficialUserId");
+
+                    b.HasIndex("AssistantOfficialUserId");
 
                     b.HasIndex("AwayTeamId");
 
                     b.HasIndex("HomeTeamId");
 
+                    b.HasIndex("TournamentId");
+
                     b.ToTable("Matches");
+                });
+
+            modelBuilder.Entity("SoccerTournament.Models.MatchAuditLog", b =>
+                {
+                    b.Property<int>("MatchAuditLogId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MatchAuditLogId"));
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<string>("ActorName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("ActorUserId")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Details")
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
+
+                    b.Property<int>("MatchId")
+                        .HasColumnType("int");
+
+                    b.HasKey("MatchAuditLogId");
+
+                    b.HasIndex("MatchId", "CreatedAtUtc");
+
+                    b.ToTable("MatchAuditLogs");
+                });
+
+            modelBuilder.Entity("SoccerTournament.Models.MatchEvent", b =>
+                {
+                    b.Property<int>("EventId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EventId"));
+
+                    b.Property<int>("EventMinute")
+                        .HasColumnType("int");
+
+                    b.Property<string>("EventType")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<int>("MatchId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int?>("PlayerId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("RecordedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("RecordedByUserId")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int?>("TeamId")
+                        .HasColumnType("int");
+
+                    b.HasKey("EventId");
+
+                    b.HasIndex("PlayerId");
+
+                    b.HasIndex("RecordedByUserId");
+
+                    b.HasIndex("TeamId");
+
+                    b.HasIndex("MatchId", "EventMinute");
+
+                    b.ToTable("MatchEvents");
                 });
 
             modelBuilder.Entity("SoccerTournament.Models.Player", b =>
@@ -370,6 +480,10 @@ namespace SoccerTournament.DataAccess.Migrations
 
                     b.Property<DateTime?>("DateOfBirth")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
@@ -562,6 +676,10 @@ namespace SoccerTournament.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("WhatsAppGroupLink")
+                        .HasMaxLength(2048)
+                        .HasColumnType("nvarchar(2048)");
+
                     b.HasKey("TeamId");
 
                     b.ToTable("Teams");
@@ -615,6 +733,52 @@ namespace SoccerTournament.DataAccess.Migrations
                             LogoUrl = "https://example.com/logos/yellow_tigers.png",
                             TeamName = "Yellow Tigers"
                         });
+                });
+
+            modelBuilder.Entity("SoccerTournament.Models.TeamContactMessage", b =>
+                {
+                    b.Property<int>("TeamContactMessageId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TeamContactMessageId"));
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(5000)
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ReplyEmail")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("SenderUserId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("SentAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Subject")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("nvarchar(160)");
+
+                    b.Property<int>("TeamId")
+                        .HasColumnType("int");
+
+                    b.HasKey("TeamContactMessageId");
+
+                    b.HasIndex("SentAtUtc");
+
+                    b.HasIndex("TeamId");
+
+                    b.ToTable("TeamContactMessages");
                 });
 
             modelBuilder.Entity("SoccerTournament.Models.Tournament", b =>
@@ -759,6 +923,39 @@ namespace SoccerTournament.DataAccess.Migrations
                             StartDate = new DateTime(2026, 10, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Status = "Registration Open"
                         });
+                });
+
+            modelBuilder.Entity("SoccerTournament.Models.TournamentDraw", b =>
+                {
+                    b.Property<int>("TournamentDrawId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TournamentDrawId"));
+
+                    b.Property<DateTime>("FinalizedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FinalizedByUserId")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("KnockoutTeamOrderJson")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TeamOrderJson")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TournamentId")
+                        .HasColumnType("int");
+
+                    b.HasKey("TournamentDrawId");
+
+                    b.HasIndex("TournamentId")
+                        .IsUnique();
+
+                    b.ToTable("TournamentDraws");
                 });
 
             modelBuilder.Entity("SoccerTournament.Models.TournamentFormat", b =>
@@ -1002,6 +1199,16 @@ namespace SoccerTournament.DataAccess.Migrations
 
             modelBuilder.Entity("SoccerTournament.Models.Match", b =>
                 {
+                    b.HasOne("SoccerTournament.Models.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("AssignedOfficialUserId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("SoccerTournament.Models.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("AssistantOfficialUserId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.HasOne("SoccerTournament.Models.Team", "AwayTeam")
                         .WithMany()
                         .HasForeignKey("AwayTeamId")
@@ -1014,9 +1221,57 @@ namespace SoccerTournament.DataAccess.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("SoccerTournament.Models.Tournament", "Tournament")
+                        .WithMany()
+                        .HasForeignKey("TournamentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("AwayTeam");
 
                     b.Navigation("HomeTeam");
+
+                    b.Navigation("Tournament");
+                });
+
+            modelBuilder.Entity("SoccerTournament.Models.MatchAuditLog", b =>
+                {
+                    b.HasOne("SoccerTournament.Models.Match", "Match")
+                        .WithMany()
+                        .HasForeignKey("MatchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Match");
+                });
+
+            modelBuilder.Entity("SoccerTournament.Models.MatchEvent", b =>
+                {
+                    b.HasOne("SoccerTournament.Models.Match", "Match")
+                        .WithMany("Events")
+                        .HasForeignKey("MatchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SoccerTournament.Models.Player", "Player")
+                        .WithMany()
+                        .HasForeignKey("PlayerId");
+
+                    b.HasOne("SoccerTournament.Models.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("RecordedByUserId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("SoccerTournament.Models.Team", "Team")
+                        .WithMany()
+                        .HasForeignKey("TeamId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("Match");
+
+                    b.Navigation("Player");
+
+                    b.Navigation("Team");
                 });
 
             modelBuilder.Entity("SoccerTournament.Models.Player", b =>
@@ -1030,11 +1285,33 @@ namespace SoccerTournament.DataAccess.Migrations
                     b.Navigation("Team");
                 });
 
+            modelBuilder.Entity("SoccerTournament.Models.TeamContactMessage", b =>
+                {
+                    b.HasOne("SoccerTournament.Models.Team", "Team")
+                        .WithMany()
+                        .HasForeignKey("TeamId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Team");
+                });
+
             modelBuilder.Entity("SoccerTournament.Models.Tournament", b =>
                 {
                     b.HasOne("SoccerTournament.Models.Team", null)
                         .WithMany("Tournaments")
                         .HasForeignKey("TeamId");
+                });
+
+            modelBuilder.Entity("SoccerTournament.Models.TournamentDraw", b =>
+                {
+                    b.HasOne("SoccerTournament.Models.Tournament", "Tournament")
+                        .WithMany()
+                        .HasForeignKey("TournamentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Tournament");
                 });
 
             modelBuilder.Entity("SoccerTournament.Models.TournamentRegistration", b =>
@@ -1077,6 +1354,8 @@ namespace SoccerTournament.DataAccess.Migrations
 
             modelBuilder.Entity("SoccerTournament.Models.Match", b =>
                 {
+                    b.Navigation("Events");
+
                     b.Navigation("Goals");
                 });
 

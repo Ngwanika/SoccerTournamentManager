@@ -1,0 +1,137 @@
+@model MatchDetailsViewModel
+
+@{
+    ViewData["Title"] = "Match details";
+    var hasResult = Model.HomeScore.HasValue && Model.AwayScore.HasValue;
+}
+
+<main class="container py-4">
+    <p><a asp-action="ViewMatches" asp-route-id="@Model.TournamentId" class="link-secondary">← Back to schedule</a></p>
+    <div class="card bg-dark-card border-0 p-4">
+        <div class="d-flex flex-wrap justify-content-between gap-2 mb-4">
+            <div>
+                <h1 class="h3 mb-1">@Model.HomeTeamName <span class="text-secondary">vs</span> @Model.AwayTeamName</h1>
+                <p class="text-secondary mb-0">@Model.TournamentName · @Model.Stage</p>
+            </div>
+            <span class="badge @(Model.Status == "Live" ? "bg-danger" : Model.Status == "Completed" ? "bg-secondary" : "bg-info") align-self-start">
+                @Model.Status
+            </span>
+        </div>
+        <div class="text-center py-3">
+            @if (hasResult)
+            {
+                <div class="display-5 fw-bold">@Model.HomeScore <span class="text-secondary">-</span> @Model.AwayScore</div>
+            }
+            else
+            {
+                <div class="h4">@Model.MatchDate.ToLocalTime().ToString("f")</div>
+            }
+        </div>
+        <div class="row g-3 border-top border-secondary pt-3">
+            <div class="col-md-6">
+                <h2 class="h5">Match officials</h2>
+                <p class="mb-1">Lead: @(Model.LeadOfficialName ?? "Not assigned")</p>
+                <p class="mb-0">Assistant: @(Model.AssistantOfficialName ?? "Not assigned")</p>
+            </div>
+            <div class="col-md-6">
+                <h2 class="h5">Previous meetings</h2>
+                @if (Model.PreviousMeetings == 0)
+                {
+                    <p class="text-secondary mb-0">No completed meetings are recorded.</p>
+                }
+                else
+                {
+                    <p class="mb-0">@Model.PreviousMeetings played · @Model.HomeWins @Model.HomeTeamName wins · @Model.Draws draws · @Model.AwayWins @Model.AwayTeamName wins</p>
+                }
+            </div>
+        </div>
+    </div>
+
+    <section class="mt-4">
+        <h2 class="h4">Match statistics</h2>
+        @if (!Model.HasTrackedEvents)
+        {
+            <p class="text-secondary">Statistics are unavailable for this match because no match events have been recorded.</p>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-dark table-striped">
+                    <thead><tr><th>@Model.HomeTeamName</th><th>Statistic</th><th>@Model.AwayTeamName</th></tr></thead>
+                    <tbody>
+                        <tr><td>@Model.HomeCorners</td><th scope="row">Corners</th><td>@Model.AwayCorners</td></tr>
+                        <tr><td>@Model.HomePenalties</td><th scope="row">Penalties</th><td>@Model.AwayPenalties</td></tr>
+                        <tr><td>@Model.HomeOffsides</td><th scope="row">Offsides</th><td>@Model.AwayOffsides</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        }
+    </section>
+
+    <section class="mt-4">
+        <h2 class="h4">Match events</h2>
+        @if (Model.Events.Count == 0)
+        {
+            <p class="text-secondary">No events have been recorded.</p>
+        }
+        else
+        {
+            <ol class="list-group list-group-flush">
+                @foreach (var matchEvent in Model.Events)
+                {
+                    <li class="list-group-item bg-transparent text-light border-secondary">
+                        <strong>@matchEvent.Minute'</strong> · @matchEvent.EventType
+                        @if (!string.IsNullOrWhiteSpace(matchEvent.PlayerName))
+                        {
+                            <span> — @matchEvent.PlayerName</span>
+                        }
+                        <span class="text-secondary"> · @matchEvent.TeamName</span>
+                        @if (!string.IsNullOrWhiteSpace(matchEvent.Notes))
+                        {
+                            <span class="d-block text-secondary">@matchEvent.Notes</span>
+                        }
+                    </li>
+                }
+            </ol>
+        }
+    </section>
+
+    <div class="row g-4 mt-2">
+        <section class="col-md-6">
+            <h2 class="h4">@Model.HomeTeamName squad</h2>
+            @if (Model.HomePlayers.Count == 0)
+            {
+                <p class="text-secondary">No roster members are listed.</p>
+            }
+            else
+            {
+                <ul class="list-group list-group-flush">
+                    @foreach (var player in Model.HomePlayers)
+                    {
+                        <li class="list-group-item bg-transparent text-light border-secondary">
+                            #@player.JerseyNumber @player.Name <span class="text-secondary">@player.Position</span>
+                        </li>
+                    }
+                </ul>
+            }
+        </section>
+        <section class="col-md-6">
+            <h2 class="h4">@Model.AwayTeamName squad</h2>
+            @if (Model.AwayPlayers.Count == 0)
+            {
+                <p class="text-secondary">No roster members are listed.</p>
+            }
+            else
+            {
+                <ul class="list-group list-group-flush">
+                    @foreach (var player in Model.AwayPlayers)
+                    {
+                        <li class="list-group-item bg-transparent text-light border-secondary">
+                            #@player.JerseyNumber @player.Name <span class="text-secondary">@player.Position</span>
+                        </li>
+                    }
+                </ul>
+            }
+        </section>
+    </div>
+</main>

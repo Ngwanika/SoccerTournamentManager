@@ -30,6 +30,11 @@ namespace SoccerTournament.Models
         [DisplayName("Contact Number 2")]
         public string? ContactNumber2 { get; set; }
 
+        [MaxLength(2048)]
+        [Url]
+        [DisplayName("WhatsApp Group Invite Link")]
+        public string? WhatsAppGroupLink { get; set; }
+
         [DisplayName("Established Date")]
         public DateTime? Established { get; set; }
 

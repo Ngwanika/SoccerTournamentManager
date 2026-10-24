@@ -1,0 +1,13 @@
+C:\Users\Silly\.copilot\repos\copilot-worktrees\SoccerTournamentManager\ngwanika-effective-system\SoccerTournament.Models\bin\Release\net9.0\SoccerTournament.Models.deps.json
+C:\Users\Silly\.copilot\repos\copilot-worktrees\SoccerTournamentManager\ngwanika-effective-system\SoccerTournament.Models\bin\Release\net9.0\SoccerTournament.Models.dll
+C:\Users\Silly\.copilot\repos\copilot-worktrees\SoccerTournamentManager\ngwanika-effective-system\SoccerTournament.Models\bin\Release\net9.0\SoccerTournament.Models.pdb
+C:\Users\Silly\.copilot\repos\copilot-worktrees\SoccerTournamentManager\ngwanika-effective-system\SoccerTournament.Models\obj\Release\net9.0\SoccerTournament.Models.csproj.AssemblyReference.cache
+C:\Users\Silly\.copilot\repos\copilot-worktrees\SoccerTournamentManager\ngwanika-effective-system\SoccerTournament.Models\obj\Release\net9.0\SoccerTournament.Models.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Silly\.copilot\repos\copilot-worktrees\SoccerTournamentManager\ngwanika-effective-system\SoccerTournament.Models\obj\Release\net9.0\SoccerTournament.Models.AssemblyInfoInputs.cache
+C:\Users\Silly\.copilot\repos\copilot-worktrees\SoccerTournamentManager\ngwanika-effective-system\SoccerTournament.Models\obj\Release\net9.0\SoccerTournament.Models.AssemblyInfo.cs
+C:\Users\Silly\.copilot\repos\copilot-worktrees\SoccerTournamentManager\ngwanika-effective-system\SoccerTournament.Models\obj\Release\net9.0\SoccerTournament.Models.csproj.CoreCompileInputs.cache
+C:\Users\Silly\.copilot\repos\copilot-worktrees\SoccerTournamentManager\ngwanika-effective-system\SoccerTournament.Models\obj\Release\net9.0\SoccerTournament.Models.sourcelink.json
+C:\Users\Silly\.copilot\repos\copilot-worktrees\SoccerTournamentManager\ngwanika-effective-system\SoccerTournament.Models\obj\Release\net9.0\SoccerTournament.Models.dll
+C:\Users\Silly\.copilot\repos\copilot-worktrees\SoccerTournamentManager\ngwanika-effective-system\SoccerTournament.Models\obj\Release\net9.0\refint\SoccerTournament.Models.dll
+C:\Users\Silly\.copilot\repos\copilot-worktrees\SoccerTournamentManager\ngwanika-effective-system\SoccerTournament.Models\obj\Release\net9.0\SoccerTournament.Models.pdb
+C:\Users\Silly\.copilot\repos\copilot-worktrees\SoccerTournamentManager\ngwanika-effective-system\SoccerTournament.Models\obj\Release\net9.0\ref\SoccerTournament.Models.dll

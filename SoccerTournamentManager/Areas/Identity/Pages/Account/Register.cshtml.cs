@@ -3,24 +3,18 @@
 #nullable disable
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
-using SoccerTournament.DataAccess.Repository.IRepository;
 using SoccerTournament.Models;
 using SoccerTournament.Utility;
 
@@ -28,32 +22,20 @@ namespace SoccerTournamentManager.Areas.Identity.Pages.Account
 {
     public class RegisterModel : PageModel
     {
-        private readonly SignInManager<ApplicationUser> _signInManager; // Change from IdentityUser
-        private readonly UserManager<ApplicationUser> _userManager;   // Change from IdentityUser
-        private readonly IUserStore<ApplicationUser> _userStore;       // Change from IdentityUser
-        //private readonly SignInManager<IdentityUser> _signInManager;
-        //private readonly UserManager<IdentityUser> _userManager;
-        //private readonly IUserStore<IdentityUser> _userStore;
-        private readonly RoleManager<IdentityRole> _roleManager;    
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IUserStore<ApplicationUser> _userStore;
         private readonly IUserEmailStore<ApplicationUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
-        private readonly IUnitOfWork _unitOfWork;
 
         public RegisterModel(
-            UserManager<ApplicationUser> userManager, // Change
-    IUserStore<ApplicationUser> userStore,     // Change
-    SignInManager<ApplicationUser> signInManager, // Change
-            //UserManager<IdentityUser> userManager,
-            //IUserStore<IdentityUser> userStore,
-            //SignInManager<IdentityUser> signInManager,
-            RoleManager<IdentityRole> roleManager,        
+            UserManager<ApplicationUser> userManager,
+            IUserStore<ApplicationUser> userStore,
+            SignInManager<ApplicationUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender,
-            IUnitOfWork unitOfWork)
+            IEmailSender emailSender)
         {
-            _unitOfWork = unitOfWork;
-            _roleManager = roleManager;
             _userManager = userManager;
             _userStore = userStore;
             _emailStore = GetEmailStore();
@@ -114,9 +96,6 @@ namespace SoccerTournamentManager.Areas.Identity.Pages.Account
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
 
-            public string? Role { get; set; }
-            [ValidateNever]
-            public IEnumerable<SelectListItem> RoleList { get; set; }
             [Required]
             public string Name { get; set; }
             public string? StreetAddress { get; set; }
@@ -124,37 +103,12 @@ namespace SoccerTournamentManager.Areas.Identity.Pages.Account
             public string? State { get; set; }
             public string? PostalCode { get; set; }
             public string? PhoneNumber { get; set; }
-            public int? TeamId { get; set; } // Add this
-            [ValidateNever]
-            public IEnumerable<SelectListItem> TeamList { get; set; } // Add this
         }
 
 
         public async Task OnGetAsync(string returnUrl = null)
         {
-            if (!_roleManager.RoleExistsAsync(SD.Role_Customer).GetAwaiter().GetResult())
-            {
-                _roleManager.CreateAsync(new IdentityRole(SD.Role_Admin)).GetAwaiter().GetResult();
-                _roleManager.CreateAsync(new IdentityRole(SD.Role_Customer)).GetAwaiter().GetResult();
-                _roleManager.CreateAsync(new IdentityRole(SD.Role_MatchOfficial)).GetAwaiter().GetResult();
-                _roleManager.CreateAsync(new IdentityRole(SD.Role_TeamMananger)).GetAwaiter().GetResult();
-                _roleManager.CreateAsync(new IdentityRole(SD.Role_TournamentManager)).GetAwaiter().GetResult();
-            }
-
-            Input = new()
-            {
-                RoleList = _roleManager.Roles.Select(x => x.Name).Select(i => new SelectListItem
-                {
-                    Text = i,
-                    Value = i
-                }),
-                // Fetch teams from UnitOfWork
-                TeamList = _unitOfWork.Team.GetAll().Select(i => new SelectListItem
-                {
-                    Text = i.TeamName,
-                    Value = i.TeamId.ToString()
-                })
-            };
+            Input = new();
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
@@ -176,23 +130,31 @@ namespace SoccerTournamentManager.Areas.Identity.Pages.Account
                 user.State = Input.State;
                 user.PostalCode = Input.PostalCode;
                 user.PhoneNumber = Input.PhoneNumber;
-                user.TeamId = Input.TeamId;
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded)
                 {
-                    _logger.LogInformation("User created a new account with password.");
-
-                    if (!String.IsNullOrEmpty(Input.Role))
+                    var roleResult = await _userManager.AddToRoleAsync(user, SD.Role_Customer);
+                    if (!roleResult.Succeeded)
                     {
-                        await _userManager.AddToRoleAsync(user, Input.Role);
-                    }
-                    else
-                    {
-                        await _userManager.AddToRoleAsync(user, SD.Role_Customer);
-                    }
-                   
+                        _logger.LogError(
+                            "Unable to assign the default Customer role to newly registered user {UserId}: {Errors}",
+                            user.Id,
+                            string.Join("; ", roleResult.Errors.Select(error => error.Description)));
+                        var deleteResult = await _userManager.DeleteAsync(user);
+                        if (!deleteResult.Succeeded)
+                        {
+                            _logger.LogError(
+                                "Unable to remove unassigned user {UserId} after role assignment failed: {Errors}",
+                                user.Id,
+                                string.Join("; ", deleteResult.Errors.Select(error => error.Description)));
+                        }
 
+                        ModelState.AddModelError(string.Empty, "Your account could not be assigned the default access role. Please try again.");
+                        return Page();
+                    }
+
+                    _logger.LogInformation("User {UserId} created a new account with the Customer role.", user.Id);
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
@@ -225,19 +187,7 @@ namespace SoccerTournamentManager.Areas.Identity.Pages.Account
             return Page();
         }
 
-        private ApplicationUser CreateUser()
-        {
-            try
-            {
-                return Activator.CreateInstance<ApplicationUser>();
-            }
-            catch
-            {
-                throw new InvalidOperationException($"Can't create an instance of '{nameof(IdentityUser)}'. " +
-                    $"Ensure that '{nameof(IdentityUser)}' is not an abstract class and has a parameterless constructor, or alternatively " +
-                    $"override the register page in /Areas/Identity/Pages/Account/Register.cshtml");
-            }
-        }
+        private static ApplicationUser CreateUser() => new();
 
         private IUserEmailStore<ApplicationUser> GetEmailStore()
         {

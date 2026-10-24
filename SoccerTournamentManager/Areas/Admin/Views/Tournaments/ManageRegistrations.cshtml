@@ -1,6 +1,12 @@
 ﻿@model IEnumerable<TournamentRegistration>
 
 <div class="container mt-4">
+    <!-- BACK + ACTIONS -->
+    <div class="back-bar">
+        <a asp-area="Admin" asp-action="Details" asp-controller="Tournaments" asp-route-id="@Model.FirstOrDefault()?.Tournament?.TournamentId" class="back-link">
+            <i class="bi bi-arrow-left"></i> Back to Tournament
+        </a>
+    </div>
     <h2>Manage Registrations — @Model.FirstOrDefault()?.Tournament?.Name</h2>
     <table class="table table-bordered">
         <thead class="table-dark">
@@ -30,12 +36,14 @@
                         @if (reg.Status == "Pending")
                         {
                             <form asp-action="ReviewRegistration" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
                                 <input type="hidden" name="registrationId" value="@reg.RegistrationId" />
                                 <input type="hidden" name="decision" value="Approved" />
                                 <button class="btn btn-success btn-sm">✅ Approve</button>
                             </form>
 
                             <form asp-action="ReviewRegistration" method="post" class="d-inline ms-1">
+                                @Html.AntiForgeryToken()
                                 <input type="hidden" name="registrationId" value="@reg.RegistrationId" />
                                 <input type="hidden" name="decision" value="Rejected" />
                                 <input type="text" name="adminNotes" placeholder="Reason (optional)"

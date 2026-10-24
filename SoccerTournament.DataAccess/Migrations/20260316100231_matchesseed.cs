@@ -64,7 +64,7 @@ namespace SoccerTournament.DataAccess.Migrations
                 column: "AwayTeamId",
                 principalTable: "Teams",
                 principalColumn: "TeamId",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Matches_Teams_HomeTeamId",
@@ -72,7 +72,7 @@ namespace SoccerTournament.DataAccess.Migrations
                 column: "HomeTeamId",
                 principalTable: "Teams",
                 principalColumn: "TeamId",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Restrict);
         }
 
         /// <inheritdoc />
